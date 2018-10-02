@@ -1,0 +1,178 @@
+<HTML>
+<HEAD>
+<TITLE> CS 214 Lab 1: Perl</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<H2>
+<A HREF="../../..">CS 214</A>
+Lab 1: Perl
+</H2>
+<HR>
+In this part of the exercise, we will write our first Perl program
+that will solve the same problem as <TT>circleArea.cpp</TT>.
+
+Use your favorite text editor
+to create a file named <TT>circle_area.pl</TT> containing
+the program below (again, personalizing its opening documentation).
+By convention, the name of our Perl source files will end in the
+<em><TT>.pl</TT></em> suffix.
+<PRE>
+<b>#!/usr/bin/perl
+# circle_area.pl computes the area of a circle given its radius
+# 
+# Input: the radius of a circle
+# Precondition: the radius is not negative
+# Output: the area of the circle.
+#
+# Begun by: Ian Christensen
+# Completed by:
+# Date:
+
+use strict;
+use warnings;
+use diagnostics;
+use sigtrap;
+use feature qw(say);
+use Math::Trig;
+
+# Subroutine: circle_area, returns a circle's area given its radius
+# Precondition: r > 0
+# Receives: $radius, a number
+# Returns: the area of a circle whose radius is $radius
+sub circle_area {
+  my $radius = shift;
+  pi * $radius ** 2;
+}
+
+if (__FILE__ eq $0) {
+  say "To compute the area of a circle,";
+  print " enter its radius: ";
+  chomp(my $radius = <STDIN>);
+  say "The area is: ", circle_area($radius);
+}
+</b>
+</PRE>
+As before, customize the program's opening documentation with
+your name, the date, etc.
+<p>
+Unlike traditional <em>compiled</em> languages (which are translated
+into machine language), Perl is an <em>interpreted</em>
+language, meaning we use an <em>interpreter</em> to run our program. 
+From the command-line, enter:
+<pre>
+   <b>perl circle_area.pl</b>
+</pre>
+The Perl interpreter (<tt>Perl</tt>) will check the syntax of your
+program and if there are no errors, will be run it.
+<P>
+When your program runs successfully, test its correctness by
+using the data values below. 
+<PRE>
+  <b>1
+
+  2
+
+  2.5
+
+  4.99999</b>
+</PRE>
+Make certain your results are equivalent to those of our other
+languages before you continue.
+<p>
+In Perl, comments begin with the <tt>#</tt> symbol and end
+at the end of the line.
+Go through the program line by line and add comments that explain
+what each line is doing.
+
+<h3>Variable Declaration</h3>
+<p>
+  When declaring a variable in perl you must specify the variables scope. To 
+do this you must use the keyword <tt>my</tt> for local variables and <tt>our</tt> 
+for global variables. Variables also must specify one of three types (not in the 
+sense of String, Integer, etc.). The types available are <tt>Scalar</tt>, <tt>Array</tt>, 
+and <tt>Hash</tt> each of which are indicated using the symbols <tt>$</tt>, <tt>@</tt>, 
+and <tt>%</tt> respectively. <tt>Scalar</tt> objects include all basic types such as 
+strings and numbers, <tt>Array</tt> objects are a container type, and <tt>Hash</tt> 
+objects are containers that link a value to a key (sometimes called a dictionary).
+<p>
+  You have probably noticed that there are quite a few <tt>use</tt> 
+statements at the top of the file. Note the <tt>feature qw(say)</tt> 
+statement. Perl 5 is not fully compatible with Perl 6 and the two 
+languages have increasingly diverged from each other, but occasionally 
+a Perl 5 programmer can use a feature from Perl 6. <tt>say</tt> is 
+probably the most commonly borrowed feature of Perl 6, and you will 
+likely want to include the feature in your future programs.
+<p>
+  Using either the <tt>diagnostics</tt> and <tt>sigtrap</tt> statements is completely up to the 
+programmers preference (many suggest that you should always use them, others are strongly against 
+using them), and you may decide not to ever use them at all. Try figuring out what these do on 
+your own and make an inline comment explaining what they are used for.
+<p>
+<tt>strict</tt> is the most important 
+of the statements, which checks to make sure that you are following proper 
+perl coding style and will stop the code from running if there are any issues.
+<p>
+  The second most important <tt>use</tt> statement is the <tt>warnings</tt> statement, 
+which will conveniently check whether variables are being used within their scope, and 
+check for errors within your code. If there are any problems with your code--out of scope 
+variables, misspellings, mismatched curly braces, etc.--<tt>warnings</tt> will give you 
+nicely formatted information on how to fix those problems. To decrease the number of <tt>
+use</tt> statements you can remove the <tt>use warnings;</tt> line and explicity call 
+<tt>warnings</tt> in the Shebang line at the top of the file using the flag <tt>-w</tt>:
+
+<PRE><b>#!/usr/bin/perl -w</b></PRE>
+
+<p>
+  Try doing this now, and experiment by purposefully making a coding error and adding or removing 
+each of the <tt>strict</tt>, <tt>warnings</tt>, <tt>diagnostics</tt>, and <tt>sigtrap</tt> options.
+
+What is the difference between
+Perl's <tt>say</tt> and <tt>print</tt> methods (note that say has to be included as a feature at the top of the file)?
+<p>
+Then, use the <em>script</em> program to record what appears in your terminal:
+<ol>
+ <li>
+  Run <em>script</em>, giving the script file a descriptive name
+  (e.g., <em><TT>script.perl</TT></em>)
+  to keep it distinct from your other languages.
+ <li>
+  Use <em>cat</em> to list your program;
+ <li>
+  Run your program using each of the four values above.
+</ol>
+If this is your last exercise, combine and print your four script files
+using the "Turn In" instructions at the bottom of
+<a href="..">the lab 1 page</a>.
+<P>
+<HR>
+<P>
+<a href="http://www.calvin.edu/">Calvin</a> &gt;
+<a href="http://cs.calvin.edu/">CS</a> &gt;
+<a href="../../../">214</a> &gt;
+<a href="../../">Labs</a> &gt;
+<a href="../">01</a> &gt;
+Perl
+<P>
+<HR>
+<FONT SIZE=-1>
+This page maintained by
+<A HREF="http://www.calvin.edu/~adams">Joel Adams</A>.
+</FONT>
+  <script>
+        (function(i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r;
+                i[r] = i[r] || function() {
+                        (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+                a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m)
+        })(window, document, 'script',
+                        '//www.google-analytics.com/analytics.js', 'ga');
+        ga('create', 'UA-864318-1', 'calvin.edu');
+        ga('send', 'pageview');
+  </script>
+
+</BODY>
+</HTML>

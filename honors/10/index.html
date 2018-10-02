@@ -1,0 +1,293 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--- Adapted from work by Ryan Holt -->
+
+<HTML>
+<HEAD>
+ <TITLE> CS 214 Lab 10: Inheritance and Polymorphism in Perl</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+<H2>
+ <A HREF="../../..">CS 214</A> Lab 10: Inheritance and Polymorphism in Perl
+</H2>
+<p>
+We will be creating several files in this exercise, so
+to keep things organized, begin by creating a subdirectory named
+<tt>Perl</tt> within your <tt>lab10</tt> directory
+and <tt>cd</tt> to that subdirectory.
+
+<h3>A Class for the Birds</h3>
+<p>Let's begin looking at inheritence in Perl 
+by building a superclass called <tt>Bird</tt>
+from which our <tt>Duck</tt>, <tt>Goose</tt>,
+and <tt>Owl</tt> classes will derive their functionality.</p>
+<p>
+To start, use your favorite text editor to open a file named
+<em>Bird.pm</em> and copy the following class skeleton into it:</p>
+
+<!-- BEGIN Code Block -->
+<pre>
+#!/usr/bin/perl
+# Bird.pm defines a Bird superclass to be extended by specific bird sub-classes
+# Begun by: Ian Christensen, for CS 214 at Calvin College
+# Completed by: 
+# Date: 
+
+package Bird;
+use feature qw(say);
+
+# Subroutine: new, constructor for Bird
+# Preconditions: Bird module was required
+# Receives: $class, the class object; $name, a string
+# Returns: $self, a Bird object
+sub new {
+  my ($class, $name) = @_;
+  my $self = bless {myName => $name}, $class;
+  $self;
+}
+
+# Subroutine: call, 
+# Precondition: Bird object must exist
+# Receives: a Bird object
+# Returns: 'Squaaaaaaawk!', the generic bird call
+
+# replace this line with the call subroutine
+
+# Subroutine: className, accessor for the class name
+# Precondition: Bird must exist
+# Receives: $self, a Bird object
+# Returns: , the Bird object's class
+
+# replace this line with the className subroutine
+
+# Subroutine: print, output operation for Bird object
+# Precondition: Bird must exist
+# Receives: a Bird object
+# Postcondition: outputs the Bird object's name, classname, and call
+
+# replace this line with the print subroutine
+
+1;
+
+</pre>
+<!-- END Code Block -->
+
+<p>As you can see, the constructor (the <tt>new</tt> subroutine)
+for the <tt>name</tt> instance variable has already been set up for you. 
+You'll need to add the <tt>call</tt> and <tt>print</tt> subroutines
+to finish the definition (but not the <tt>class_name</tt> subroutine
+as we'll soon see).</p>
+
+<h3>The <tt>call</tt>, <tt>className</tt>, and <tt>print</tt> subroutines</h3>
+<p>
+Since every bird needs to say something, we need to provide our
+<tt>Bird</tt> superclass with a definition of a general <tt>call</tt>
+subroutine.
+It should return the string <tt>'Squaaaaaaawk!'</tt>,
+which is the sound every unknown bird makes.</p>
+<p>
+In addition, we need to be able to print a message containing everything
+we need to know about our bird.
+It should output a string containing the bird's name,
+the specific class name (we'll get to this shortly),
+the string " says ", and the return value of the <tt>
+call</tt> subroutine. As in previous exercises, you can 
+use <tt>puts</tt> to output this string to the screen, 
+and the <tt>+</tt> symbol to concatenate two strings.</p>
+<p>
+Now you may be asking where we get the specific class name from in Perl?
+In other languages such a feat would be difficult and so we might
+instead simply hard code in the name as a string.
+In Perl however, we can access the class name with the expression:
+<pre>
+   ref($self);
+</pre>
+This attribute comes in handy for more advanced inheritance features
+of Perl, but for now it'll serve us well to tell us what kind of
+bird we're dealing with.</p>
+<p>
+Putting all of this together gives us these function definitions:
+<pre>
+package Bird;
+use feature qw(say);
+
+sub new {
+  my ($class, $name) = @_;
+  my $self = bless {myName => $name}, $class;
+  $self;
+}
+
+sub call {
+  'Squaaaaaaawk!';
+}
+
+sub className {
+  my $self = shift;
+  ref($self);
+}
+
+sub print {
+  my $self = shift;
+  say $self->{myName}, $self->className, " says ", $self->call;
+}
+
+1;
+</pre>
+
+
+<h3>The Rest of the Flock</h3>
+<p>Now that we've declared our <tt>Bird</tt> superclass,
+we need to declare our <tt>Duck</tt>, <tt>Goose</tt>,
+and <tt>Owl</tt> subclasses.
+Open a new file <em>Owl.pl</em> and add the following
+class skeleton to it: </p>
+
+<!-- BEGIN Code Block -->
+<pre>
+#!/usr/bin/perl
+# Owl.pm defines the Owl class which inherits attributes and methods from the Bird superclass
+# Begun by: Ian Christensen, for CS 214 at Calvin College
+# Completed by:
+# Date:
+
+package Owl;
+use parent Bird;
+
+# Subroutine: call, accessor for a Owl call
+# Precondition: Owl must exist
+# Receives: a Owl object
+# Returns: 'Whoo-hoo!', a Owl call
+
+# replace this line with the call subroutine
+
+1;
+
+</pre>
+<!-- END Code Block -->
+
+<p>
+As you might have guessed the <tt>use parent</tt> header
+is what triggers inheritance in Perl.
+We use it here to make <tt>Owl</tt> a subclass of <tt>Bird</tt>.
+(This kind of inheritence is single inheritance.)
+<p>
+Once you've copied the class into <em>Owl.pm</em>,
+you'll need to write a class-specific <tt>call</tt> subroutine.
+It shouldn't be too difficult &mdash; use the subroutine from
+<tt>Bird</tt> as a model and change the string
+from <tt>'Squaaaaaaawk!'</tt> to <tt>'Whoo-hoo!'</tt>.
+Once you've done that, you're done!
+Since we didn't need to hard-code in the class name,
+there's no need to override the <tt>className</tt> subroutine
+that <tt>Owl</tt> inherits from <tt>Bird</tt>.
+And since we didn't add any attributes to our class,
+there's no need to define a new constructor.</p>
+<p>
+Now just repeat this process to define <tt>Duck</tt> 
+and <tt>Goose</tt> classes.
+Once you've done that, all that's left is test our code.
+
+<h3>Testing</h3>
+Use your editor to open a file named <em>Birds.pl</em>
+and copy the following driver into it:
+
+<!-- BEGIN Code Block -->
+<pre>
+#!/usr/bin/perl -w
+# Birds.pl tests out the menagerie of bird classes
+# Begun by: Ian Christensen, for CS 214 at Calvin College
+# Completed by:
+# Date:
+
+use strict;
+use feature qw(say);
+
+require Bird;
+require Duck;
+require Goose;
+require Owl;
+
+if (__FILE__ eq $0) {
+  say "\nWelcome to the Bird Park!\n";
+
+  my $bird0 = Bird->new("Hawkeye");
+  $bird0->print;
+
+  my $bird1 = Duck->new("Donald");
+  $bird1->print;
+
+  my $bird2 = Goose->new("Mother");
+  $bird2->print;
+
+  my $bird3 = Owl->new("Woodsey");
+  $bird3->print;
+
+  say "\n";
+}
+
+</pre>
+<!-- END Code Block -->
+
+Save, and test your creation by entering the following
+command on the command-line:
+<pre>
+   perl Birds.pl
+</pre>
+If all is well, each of your flock should do their own things.
+If not, find and fix the errors before proceeding.
+<p>
+As we have defined it, each bird's name and class-name are
+jammed together.
+Find and improve this by making a space appear between each bird's name
+and class-name.
+Note that thanks to inheritance and polymorphism,
+you only have to make this change in one place,
+and all of our birds inherit that change.
+
+<p>
+<b>Turn In</b>.
+When all is correct,
+create a script file in which you
+(i) run your program to show that it works correctly, and
+(ii) use <TT>cat</TT> to display the contents of each of your 
+<tt>.pl</tt> and <tt>.pm</tt> files.
+<P>
+That concludes the Perl part of this lab.
+<P>
+If this was your last exercise, return to the
+<a href="../">lab 10</a> page and follow the 
+"Turn In" instructions there.
+<HR>
+<p>
+<a href="http://www.calvin.edu/">Calvin</a> &gt;
+<a href="http://cs.calvin.edu/">CS</a> &gt;
+<a href="../../../">214</a> &gt;
+<a href="../../">Labs</a> &gt;
+<a href="../">10</a> &gt;
+Perl
+<p>
+<HR>
+<FONT SIZE=-1>
+This page maintained by
+<A HREF="http://www.calvin.edu/~adams">Joel Adams</A>.
+</FONT>
+<script>
+	(function(i, s, o, g, r, a, m) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function() {
+			(i[r].q = i[r].q || []).push(arguments)
+		}, i[r].l = 1 * new Date();
+		a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore(a, m)
+	})(window, document, 'script',
+		'//www.google-analytics.com/analytics.js', 'ga');
+	ga('create', 'UA-864318-1', 'calvin.edu');
+	ga('send', 'pageview');
+</script>
+
+</body>
+</html>

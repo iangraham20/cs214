@@ -1,0 +1,286 @@
+Script started on Mon 26 Mar 2018 03:24:18 PM EDT
+igc2@church:~/workspace/214/labs/07$ cat NameTester.java
+/* NameTester.java is a 'driver' to test class Name
+ * Begun by: Prof. Adams, for CS 214 at Calvin College
+ * Student: Ian Christensen, for CS 214 at Calvin College
+ * Date: Spring, 2018
+ */
+
+// Driver for testing the name class
+public class NameTester {
+	public static void main(String[] args) {
+		Name aName = new Name("John", "Paul", "Jones");
+		assert aName.getFirst().equals("John");
+		assert aName.getMiddle().equals("Paul");
+		assert aName.getLast().equals("Jones");
+		System.out.println(aName);
+		assert aName.toString().equals("John Paul Jones");
+		System.out.println("All tests passed!");
+	}
+}
+
+// Class for a name object
+class Name {
+	private String myFirst, myMiddle, myLast;
+	public Name(String first, String middle, String last) {
+		myFirst = first;
+		myMiddle = middle;
+		myLast = last;
+	}
+	public String getFirst() { return myFirst; }
+	public String getMiddle() { return myMiddle; }
+	public String getLast() { return myLast; }
+	public String toString() { return myFirst + ' ' + myMiddle + ' ' + myLast; }
+};
+igc2@church:~/workspace/214/labs/07$ ja  make java
+javac -deprecation NameTester.java
+igc2@church:~/workspace/214/labs/07$ java NameTester
+John Paul Jones
+All tests passed!
+igc2@church:~/workspace/214/labs/07$ exit
+
+Script done on Mon 26 Mar 2018 03:24:39 PM EDT
+Script started on Mon 26 Mar 2018 03:21:17 PM EDT
+igc2@church:~/workspace/214/labs/07$ cat name_tester.adb
+-- NameTester.rb tests class Name and its operations
+-- Begun by: Prof. Adams, for CS 214 at Calvin College
+-- Student: Ian Christensen, for CS 214 at Calvin College
+-- Date: Spring, 2018
+
+with Ada.Text_IO;
+use Ada.Text_IO;
+
+procedure name_tester is
+
+NAME_SIZE : constant Integer := 8;
+Type Name is record
+    MyFirst, MyMiddle, MyLast : String(1..NAME_SIZE);
+end record;
+aName : Name;
+
+  -- Init initializes a Name variable
+  -- Parameters: theName, the Name variable
+  --          First, the first name
+  --          Middle, the middle name,
+  --          Last, the last name
+  -- Return: theName, its fields set to First,
+  --               Middle, and Last
+  procedure Init(TheName: out Name; First, Middle, Last : in String) is
+  begin
+    TheName.MyFirst := First;
+    TheName.MyMiddle := Middle;
+    TheName.MyLast := Last;
+  end Init;
+
+  -- getFirst(Name) retrieves Name.myFirst
+  -- Parameters: theName, a Name
+  -- Precondition: theName has been initialized
+  -- Return: theName.myFirst
+  function getFirst(TheName : in Name) return String is
+  begin
+    return TheName.MyFirst;
+  end getFirst;
+
+  -- getMiddle(Name) retrieves Name.myMiddle
+  -- Parameters: theName, a Name
+  -- Precondition: theName has been initialized
+  -- Return: theName.myMiddle
+  function getMiddle(TheName : in Name) return String is
+  begin
+    return TheName.MyMiddle;
+  end getMiddle;
+
+  -- getLast(Name) retrieves Name.myLast
+  -- Parameters: theName, a Name
+  -- Precondition: theName has been initialized
+  -- Return: theName.myLast
+  function getLast(TheName : in Name) return String is
+  begin
+    return TheName.MyLast;
+  end getLast;
+
+  -- getFullName(Name) retrieves Name as a String
+  -- Parameters: theName, a Name
+  -- Precondition: theName has been initialized
+  -- Return: a String representation of theName
+  function getFullName(TheName : in Name) return String is
+  begin
+    return TheName.MyFirst & " " & TheName.MyMiddle & " " & TheName.MyLast;
+  end getFullName;
+
+  -- Put(Name) displays a Name value
+  -- Precondition: theName has been initialized
+  -- Parameters: theName, a Name
+  -- Output: theName, to the screen
+  procedure Put(TheName : in Name) is
+  begin
+    Put(TheName.MyFirst);
+    Put(TheName.MyMiddle);
+    Put(TheName.MyLast);
+  end Put;
+
+begin
+  Init(aName, "John    ", "Paul    ", "Jones   ");
+  pragma Assert(getFirst(aName) = "John    ", "getFirst() failed");
+  pragma Assert(getMiddle(aName) = "Paul    ", "getMiddle() failed");
+  pragma Assert(getLast(aName) = "Jones   ", "getLast() failed");
+  pragma Assert(getFullName(aName) = "John     Paul     Jones   ", "getFullName() failed");
+  Put(aName); New_line;
+  Put("All tests passed!"); New_line;
+end name_tester;
+
+igc2@church:~/workspace/214/labs/07$ make ada
+gnatmake name_tester -gnata
+gcc-5 -c -gnata name_tester.adb
+gnatbind-5 -x name_tester.ali
+gnatlink-5 name_tester.ali
+igc2@church:~/workspace/214/labs/07$ ./name_tester
+John    Paul    Jones   
+All tests passed!
+igc2@church:~/workspace/214/labs/07$ make clean
+rm -f *.class *.o *.ali *~ name_tester
+igc2@church:~/workspace/214/labs/07$ exit
+
+Script done on Mon 26 Mar 2018 03:21:40 PM EDT
+;;; nameTester.el simulates and tests an e-LISP Name type.
+;;; Begun by: Prof. Adams, for CS 214 at Calvin College
+;;; Student: Ian Christensen, for CS 214 at Calvin College
+;;; Date: Spring, 2018
+
+" Name constructs a name from three strings
+  Receive: first, middle and last, three strings
+  Return: the triplet (given middle family) "
+(defun Name (given middle family)
+  (list given middle family)
+)
+
+Name
+
+(Name "John" "Paul" "Jones")
+
+("John" "Paul" "Jones")
+
+" getFirst extracts the first name of a name object
+  Receive: theName, a Name
+  Return: the first string in theName "
+(defun getFirst (theName)
+  (car theName)
+)
+
+getFirst
+
+(getFirst (list "John" "Paul" "Jones"))
+
+"John"
+
+" getMiddle extracts the middle name of a name object
+  Receive: theName, a Name
+  Return: the second string in theName "
+(defun getMiddle (theName)
+  (car (cdr theName))
+)
+
+getMiddle
+
+(getMiddle (list "John" "Paul" "Jones"))
+
+"Paul"
+
+" getLast extracts the last name of a name object
+  Receive: theName, a Name
+  Return: the third string in theName "
+(defun getLast (theName)
+  (car (cdr (cdr theName)))
+)
+
+getLast
+
+(getLast (list "John" "Paul" "Jones"))
+
+"Jones"
+
+" getFullName returns a full name in F-M-L order
+  Receive: theName, a Name
+  Return: myFirst, myMiddle, myLast "
+(defun getFullName (theName)
+  (concat (getFirst theName) " " (getMiddle theName) " " (getLast theName))
+)
+
+getFullName
+
+(getFullName (list "John" "Paul" "Jones"))
+
+"John Paul Jones"
+
+" printName displays a name object
+  Receive: theName, a Name, 
+           buffer, the name of a buffer
+  Output: the strings in theName to buffer "
+(defun printName (theName buffer)
+  (princ theName buffer)
+)
+
+printName
+
+;;; A simple driver for our Name functions
+(progn
+  (require 'cl)                              ; assert
+  (setq aName (Name "John" "Paul" "Jones"))  ; build a Name
+  (assert (equal (getFirst aName) "John" ))  ; test it
+  (assert (equal (getMiddle aName) "Paul" ))
+  (assert (equal (getLast aName) "Jones" ))
+  (assert (equal (getFullName aName) "John Paul Jones" ))
+  (setq buf (get-buffer "nameTester.el"))    ; buf = this buffer
+  (assert (eq (printName aName buf) aName) ) ; output
+  (terpri buf)                               ; newline
+  (princ "All tests passed!" buf)            ; feedback
+  (terpri buf)                               ; newline
+)
+
+(John Paul Jones)
+All tests passed!
+t
+Script started on Mon 26 Mar 2018 03:23:16 PM EDT
+igc2@church:~/workspace/214/labs/07$ cat NameTester.rb
+# NameTester.rb tests class Name and its operations
+# Begun by: Prof. Adams, for CS 214 at Calvin College
+# Student: Ian Christensen, for CS 214 at Calvin College
+# Date: Spring, 2018
+
+require 'test/unit/assertions'
+include Test::Unit::Assertions
+
+# Class for a name object
+class Name
+	def initialize(first, middle, last)
+		@first, @middle, @last = first, middle, last
+	end
+
+	def fullName()
+		@first + ' ' + @middle + ' ' + @last
+	end
+
+	def print()
+		puts fullName()
+		fullName()
+	end
+
+	attr_reader :first, :middle, :last
+end
+
+# Driver for testing the name class
+if __FILE__ == $0
+	name = Name.new("John", "Paul", "Jones")
+	assert name.first == "John", "first failed"
+	assert name.middle == "Paul", "middle failed"
+	assert name.last == "Jones", "last failed"
+	assert name.fullName == "John Paul Jones", "fullName failed"
+	assert name.print == "John Paul Jones", "print failed"
+	print "All tests passed!\n"
+end
+igc2@church:~/workspace/214/labs/07$ ruby NameTester.rb
+John Paul Jones
+All tests passed!
+igc2@church:~/workspace/214/labs/07$ exit
+
+Script done on Mon 26 Mar 2018 03:23:32 PM EDT

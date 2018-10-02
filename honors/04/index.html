@@ -1,0 +1,106 @@
+<HTML>
+<HEAD>
+<TITLE> CS 214 Lab 4: Perl</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<H2>
+<A HREF="../..">CS 214</A>
+Lab 4: Perl
+</H2>
+<HR>
+<P>
+Begin by using your favorite text editor
+to edit the file <TT>log_table.pl</TT>.
+Take a moment to study it, to see how it implements our basic
+algorithm,
+and compare it to the other "programs" you've seen.
+</P>
+
+<p>Today we'll be looking at repetition. Perl provides a
+<tt>for</tt> loop for solving counting problems, 
+along with a <tt>while</tt> and <tt>until</tt> loop.
+The <tt>until</tt> loop works like a <tt>while</tt> loop,
+except that it runs until the condition is true
+(syntactical sugar really). 
+Let's look at a BNF for these three loop types:</p>
+
+<!-- BEGIN BNF Block -->
+<pre>
+LoopStatement ::= LoopClause StatementList
+LoopClause    ::= <b>for (</b>Expression<b>;</b>Expression<b>;</b>Expression<b>) {</b> statementList <b>}</b>
+| <b>foreach identifier (</b>Array<b>) {</b> statementList <b>}</b>
+| <b>while (</b>Expression <b>) {</b> statementList <b>}</b>
+| <b>until (</b>Expression<b>) {</b> statementList <b>}</b>
+</pre>
+<!-- END BNF Block -->
+
+<p>
+Our particular problem is an example of a <em>counting problem</em>,
+in which we want to count from <em>start</em> to <em>stop</em>
+by intervals of <em>increment</em>,
+displaying the value of <em>count</em> and its logarithm.
+For counting problems, the Perl <tt>for</tt>
+loop provides the most convenient notation,
+but you'll practice that in this week's project
+so we'll use a while loop today.
+</p>
+In order to actually compute the logarithms, we'll use Perl's
+<tt>log()</tt> function. However, Perl's log() function computes
+the natural logarithm of the expression. To compute the log base
+10 of a number we have to use basic algebra. To do this divide the
+natural log of the number by the natural log of the desired base.
+</p>
+<p> 
+We can use Perl's <tt>say</tt> statement to print a row of our table.  
+But <tt>say</tt> will only display a single string.
+We could write out each piece of the row with separate <tt>say</tt> 
+(or <tt>print</tt>) statments, but Perl allows you to insert variable names 
+directly within strings. In addition to the direct variable insertion Perl 
+allows concatenations of expressions (such as an algebraic expression that
+calculates a logarithm) to the end of a string simply by seperating the string 
+and the expression by a comma (Perl also has a way to preform string interpolation 
+by enclosing the function in curly braces and dereferencing the method like so 
+${\ log($number)}, but this issomething of a hack with the string parser and is 
+not recognized as an offical method). Write a single statement to print out a row. </p>
+<p>
+Then, all that's left to do is to increment our counting variable by
+the increment variable the user provided.</p>
+<p>
+Be sure to test your program on a variety of input values.</p>
+<p>
+When you are certain it is correct, use <em>script</em> to 
+list your program and show that it executes correctly.
+<P>
+That concludes the Perl part of this lab. 
+<p>
+<hr>
+<p>
+<a href="http://www.calvin.edu/">Calvin</a> &gt;
+<a href="http://cs.calvin.edu/">CS</a> &gt;
+<a href="../../../">214</a> &gt;
+<a href="../../">Labs</a> &gt;
+<a href="../">04</a> &gt;
+Perl
+<p>
+<hr>
+<FONT SIZE=-1>
+This page maintained by
+<A HREF="http://www.calvin.edu/~adams">Joel Adams</A>.
+</FONT>
+ <script>
+        (function(i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r;
+                i[r] = i[r] || function() {
+                        (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+                a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m)
+        })(window, document, 'script',
+                        '//www.google-analytics.com/analytics.js', 'ga');
+        ga('create', 'UA-864318-1', 'calvin.edu');
+        ga('send', 'pageview');
+ </script>
+</BODY>
+</HTML>

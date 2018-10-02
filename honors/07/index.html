@@ -1,0 +1,222 @@
+
+<HTML>
+<HEAD>
+<TITLE> CS 214 Lab 7: Perl</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+<H2>
+<A HREF="../..">CS 214</A>
+Lab 7: Perl
+</H2>
+<HR>
+
+<p>
+Start by copying the file <em>NameTester.pl</em> from the course
+directory into your directory for this lab.
+Using your favorite text editor, open it up and take a few minutes
+to look over its contents.
+Then run it using the command:
+<pre>
+   perl NameTester.pl
+</pre>
+and verify that it runs correctly.
+</p><p>
+<b>The <tt>Name</tt> class</b>.
+Uncomment the line:
+<pre>
+   #   name = Name.new("John", "Paul", "Jones")
+</pre>
+Then re-run your program.
+What happens?
+</p><p>
+To fix the problem,
+we need to define a Perl class named <tt>Name</tt>. 
+Perl classes are simply namespaces called packages, 
+for example a single file could have multiple namespaces 
+declared as different package names.
+Here is the basic BNF for a package declaration:</p> 
+<!-- BEGIN BNF Block -->
+<pre>
+   PackageDec  ::= <b>package identifier;</b>
+</pre>
+<!-- END BNF Block -->
+
+<h2>Building on the BNF</h2>
+<p>The <strong>identifier</strong> for Perl classes must always
+begin with a capital letter. 
+This is because Perl has a semantic rule that constants must begin
+with a capital letter. 
+If you think about what a class is, it is a blueprint
+-- a static structure that doesn't change --
+and so this semantic rule makes a lot of sense. 
+<p>
+Using the BNF above, we might create this skeleton to work with:</p>
+
+<!-- BEGIN Code Block -->
+<pre>
+   <b>package</b> Name;
+</pre>
+<!-- END Code Block -->
+Add this to <em>NameTester.pl</em>.
+Now, we just have to fill in the operations!
+
+<h3>Operations</h3>
+
+<p><b>Initialization</b>.
+To initialize the members of a class in Perl,
+we define a method named <tt>new()</tt>:
+<!-- BEGIN Code Block -->
+<pre>
+   <b>
+    sub new {
+      my ($class, $myFirst, $myMiddle, $myLast) = @_;
+      my $self = bless {myFirst => $myFirst, myMiddle => $myMiddle, myLast => $myLast}, $class;
+      $self;
+    }
+  </b>
+</pre>
+<!-- END Code Block -->
+
+The <tt>new()</tt> method serves as the class constructor.
+It gets called when you send the class the 
+<tt>new</tt> message, as in <tt>Name->new</tt>.
+</p><p>
+Looking at the definition of <tt>new()</tt> for 
+<tt>Name</tt>, we can see an interesting bit of Perl syntax.
+The technique here is called <em>blessing a package reference</em>,
+and it allows us to access each of the global variables in the package 
+only in association with that specific package. This allows you to apply 
+special syntax to the blessed reference when we want to call subroutines 
+from the package with one of the global variables as the first parameter 
+(i.e. $object->printAllParameters(@otherArgs) would begin by printing 
+$object assuming that it was blessed and in the same package as the subroutine
+printAllParameters).
+</p><p>
+Add this to your <tt>Name</tt> class.
+Then test what you have done so far.
+If you've not made any mistakes, your program should now pass the test!
+</p><p>
+
+<b>Accessors</b>.
+Uncomment the first <tt>assert</tt> line in the driver.
+Re-run your program.
+What happens? In Perl the global variables of an object can be accessed directly 
+without having to write any getters of any kind. However, if we wanted to we could 
+write a simple accessor like this:
+<!-- BEGIN Code Block -->
+<pre>
+   <b>
+    sub accessFirst {
+      my ($self, $newValue) = @_;
+      if (@_ == 2) {
+        $self->{myFirst} = $newValue;
+      }
+      return $newValue;
+    }
+  </b>
+</pre>
+<!-- END Code Block -->
+</p><p>
+This would provide a single method that when called returns the value of myFirst, 
+but also checks to see if the user passed a value into the method and sets myFirst 
+to that new value. This is both a getter and setter method.
+</p><p>
+<b>The <tt>fullName</tt> Method</b>.
+Uncomment the next-to-last assertion,
+run your program, and verify that the assertion fails.
+</p><p>
+To pass the test,
+we must define a <tt>fullName</tt> method that converts
+a <tt>Name</tt> into a string.
+To do so, we need a way to concatenate strings.
+In Perl, we can use the <tt>.</tt> operator to perform string concatenation 
+or the <tt>join</tt> method provided by perl. Here are some examples:
+<pre>
+  <b>
+    my $input0 = "hello";
+    my $input1 = "world!";
+    my $output0 = join " ", $input0, $input1;
+    my $output1 = $input0 . " " . $input1;
+
+    print $output0;
+    
+    print $output1;
+
+    $input0 .= $input1;
+    print $input0;
+  </b>
+</pre>
+<p>
+All three of these examples would output <tt>hello world!</tt>. Try using the join method in your code.
+
+</p><p>
+Using this information, define method <tt>fullName</tt>.
+Then re-run your program and verify that your method now passes the test.
+Continue when it does.
+</p><p>
+<b>The <tt>print</tt> Method</b>.
+Uncomment the final assertion in the program.
+Re-run your program and verify that we fail the test.
+</p><p>
+To pass this test,
+we need to write a method that prints the full name to the screen
+and then returns that name to the caller.
+Since we have defined the <tt>fullName</tt> method, this is simple.
+The only "gotcha" is that you'll need to use <tt>say</tt>
+instead of <tt>print</tt> to do the actual output, 
+because calling <tt>print</tt> within a method called <tt>print</tt>
+can cause a problem...
+<p>
+Note that the test expects this method to return the name
+being printed, so be sure to make it do so.
+(Remember, Perl methods return the last expression they evaluate.)
+Aside from  that, the method should be easy to write.
+<p>
+When your are done, make sure that all of the test-code is uncommented
+and test your class.
+When everything works correctly, take a few minutes to document
+each of your methods.
+<p>
+Then use <tt>script</tt> to make a recording named <em>script.Perl</em>
+in which you list and then run <em>NameTester.pl</em>.
+<P>
+That concludes the Perl part of this lab. 
+<p>
+If this was your last exercise, return to the
+<a href="../">lab 07</a> page and follow the 
+"Turn In" instructions there.
+<p>
+<hr>
+<p>
+<a href="http://www.calvin.edu/">Calvin</a> &gt;
+<a href="http://cs.calvin.edu/">CS</a> &gt;
+<a href="../../../">214</a> &gt;
+<a href="../../">Labs</a> &gt;
+<a href="../">07</a> &gt;
+Perl
+<p>
+<hr>
+<FONT SIZE=-1>
+This page maintained by
+<A HREF="http://www.calvin.edu/~adams">Joel Adams</A>.
+</FONT>
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script',
+    '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-864318-1', 'calvin.edu');
+  ga('send', 'pageview');
+</script>
+
+</BODY>
+</HTML>
+

@@ -1,0 +1,24 @@
+(defun readarray (array size i)
+  (if (< i (- size 1))
+      (readarray array size (+ i 1))
+  )
+  (let ( (usr (read-from-minibuffer "Enter value: " nil nil t)) ))
+  (aset array i usr)
+  array
+)
+
+(readarray (make-vector 3 0) 3 0)
+
+(defun printarray(array size i)
+  (format "\nThe value at index #%s is: %s" i array[i])
+  (if (< i (- size 1))
+  (printarray array size (+ i 1))
+  )
+)
+
+(defun main (size)
+  (interactive "\nnEnter the size of the array: ")
+  (setq array (make-vector size 0))
+  (readarray array size 0)
+  (printarray array size 0)
+)

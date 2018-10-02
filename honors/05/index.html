@@ -1,0 +1,136 @@
+<HTML>
+<HEAD>
+<TITLE> CS 214 Lab 4: Perl</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<H2>
+<A HREF="../..">CS 214</A>
+Lab 5: Perl
+</H2>
+<HR>
+<p>
+Using your favorite text editor, open <em>split.pl</em>
+and take a moment to look over its contents,
+customize its opening documentation, etc.
+<p>
+Subprograms in Perl are called subroutines. 
+Since everything in Perl is an object, 
+subroutine invocations are messages that are sent to objects.
+Let's look at a BNF for a Perl subroutine:</p>
+
+<!-- BEGIN BNF Block -->
+<pre>
+SubroutineDef   ::=   <b>sub identifier</b> SubroutineBody
+SubroutineBody  ::=   <b>{</b> ParamOptions StatementList <b>}</b>
+ParamOptions    ::=   ShiftStatements | ListAssignment | DirectAccess | &#8709;
+ShiftStatements ::=   ShiftStatement ShiftStatements | &#8709;
+ShiftStatement  ::=   <b>my $identifier = shift;</b>
+ListAssignment  ::=   <b>my (</b> ParameterDecs <b>) = @_;</b>
+ParameterDecs   ::=   <b>$identifier</b> MoreParams | &#8709;
+MoreParams      ::=   , <b>$identifier</b> MoreParams | &#8709;
+DirectAccess    ::=   <b>my $identifier = $_[</b> Index <b>];</b>
+DirectAccesses  ::=   DirectAccess DirectAccesses | &#8709;
+</pre>
+<!-- END BNF Block -->
+<p>
+As we have seen previously Perl parameters are unique in the sense that they 
+are not designated to accept certain types or even a certain number of parameters 
+by the syntax; instead, they are assumed to be the correct number and type and will 
+cause errors if the subroutine attempts to perform an invalid operation on the 
+parameter that has been passed in.
+<p>
+In addition to the standard parameters,
+Perl provides an additional parameter type for special situations: 
+the <em>group parameter</em>.
+These parameters are the same as any parameter of type array, however, any 
+array that has been placed at the end of the standard  parameter list will 
+collect any additional parameters into an array designated by the array name, 
+and can later be accessed via the array. This is not entirely neccessary because
+the parameter list <em>@_</em> can be accessed at anytime throughout the subroutine, however, 
+it can be used to keep the code clean and make the contents more readable.
+
+Perl has no reference parameters in the sense of C++,
+so we will have our subroutine return an array containing
+the two substrings.
+So we just have to end our subroutine with a statement whose
+value is an array containing the two substrings we want to return.
+A <tt>return</tt> statement is not needed to accomplish this, but
+can be used to avoid confusion.</p>
+
+<h3>Splitting aString</h3>
+<p>
+As it happens,
+Perl's <tt>String</tt> class provides a <tt>split()</tt> subroutine.
+However, this subroutine "tokenizes" a string,
+splitting it into substrings based on a delimiter,
+so it won't solve our problem;
+to do that, we'll write our own <tt>splitter()</tt> function
+and pass it the <tt>String</tt> we want to split.</p>
+<p>
+Begin by defining a stub for the <tt>splitter()</tt> function,
+and give it two parameters: <tt>aString</tt> and <tt>position</tt>. 
+<p>
+In order to retrieve the two substrings,
+we can use the <tt>substr</tt> method the <tt>String</tt> class provides. 
+This method takes three arguments: the string, the starting position, and the ending position.
+<p>
+In order to pass back the two substrings,
+we'll put them into an array. 
+Perl arrays are constructed by declaring an 
+identifier preceded by the @ symbol (as opposed 
+to the standard $ symbol for scalar variables) 
+with the contents of the array being surrounded by 
+parentheses. However, to minimize the subroutine's 
+body statements we can skip the identifier naming 
+convention and directly return the two substrings 
+within parentheses.
+</p>
+<p>
+Be sure to test your program on a variety of input values,
+as we have done with our other languages.</p>
+<p>
+When you are confident your subroutine is correct,
+use script to create a recording in which you list your
+program and show that it works correctly using 
+the input string <tt>hello</tt> and
+the index values 0, 3, and 5.
+Save the resulting <tt>script</tt> file to be concatenated to your submission. 
+<p>
+That concludes the Perl part of this lab. 
+<p>
+If this was your last exercise, return to the
+<a href="../">lab 05</a> page and follow the 
+"Turn In" instructions there.
+<p>
+<hr>
+<p>
+<a href="http://www.calvin.edu/">Calvin</a> &gt;
+<a href="http://cs.calvin.edu/">CS</a> &gt;
+<a href="../../../">214</a> &gt;
+<a href="../../">Labs</a> &gt;
+<a href="../">05</a> &gt;
+Perl
+<p>
+<hr>
+<FONT SIZE=-1>
+This page maintained by
+<A HREF="http://www.calvin.edu/~adams">Joel Adams</A>.
+</FONT>
+<script>
+	(function(i, s, o, g, r, a, m) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function() {
+			(i[r].q = i[r].q || []).push(arguments)
+		}, i[r].l = 1 * new Date();
+		a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore(a, m)
+	})(window, document, 'script',
+		'//www.google-analytics.com/analytics.js', 'ga');
+	ga('create', 'UA-864318-1', 'calvin.edu');
+	ga('send', 'pageview');
+</script>
+
+</BODY>
+</HTML>

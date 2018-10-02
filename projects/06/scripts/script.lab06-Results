@@ -1,0 +1,296 @@
+Script started on Fri 09 Mar 2018 03:26:11 PM EST
+igc2@thompson:~/workspace/214/projects/06$ javac -deprecation ArrayProcessing.ja 
+va
+
+igc2@thompson:~/workspace/214/projects/06$ cat ArrayProcessing.java
+/* ArrayProcessing.java allows a user to store and print values in an array
+ *
+ * Input: the array size and the individual values
+ * Precondition: the input values are doubles
+ * Output: prints out the values contained in array
+ *
+ * Author: Ian Christensen, CS 214 at Calvin College
+ * Date: Spring, 2018
+ */
+
+import java.util.Scanner;
+
+public class ArrayProcessing {
+  public static void main(String[] args) {
+  		Scanner keyboard = new Scanner(System.in);
+  		System.out.print("\nEnter the size of the array: ");
+  		int size = keyboard.nextInt();
+  		double[] array = new double[size];
+  		readArray(array, size, keyboard);
+  		printArray(array, size);
+  	}
+
+  /* Function: prompts the user to specify the array values
+   * Parameters: array[], an array of doubles && size, an int && keyboard, a keyboard object
+   * Preconditions: user inputs are doubles
+   * Returns: values within array
+   */
+  public static void readArray(double array[], int size, Scanner keyboard) {
+  	for (int i = 0; i < size; i++) {
+  		System.out.print("\nEnter a value to store at index " + i + ": ");
+  		array[i] = keyboard.nextDouble();
+  	}
+  }
+
+  /* Function: prints an arrays values
+   * Parameters: array[], an array of doubles && size, an int
+   * Preconditions: array contains values
+   * Returns: prints out the values contained in array
+   */
+  public static void printArray(double array[], int size) {
+  	for (int i = 0; i < size; i++) {
+  		System.out.println("\nThe value at index " + i + " is: " + array[i]);
+  	}
+  	System.out.print("\n");
+  }
+}
+
+igc2@thompson:~/workspace/214/projects/06$ java ArrayProcessing
+
+Enter the size of the array: 3
+
+Enter a value to store at index 0: 1.0
+
+Enter a value to store at index 1: 2.000005
+
+Enter a value to store at index 2: 95678
+
+The value at index 0 is: 1.0
+
+The value at index 1 is: 2.000005
+
+The value at index 2 is: 95678.0
+
+igc2@thompson:~/workspace/214/projects/06$ exit
+
+Script done on Fri 09 Mar 2018 03:27:31 PM EST
+Script started on Wed 14 Mar 2018 04:06:05 PM EDT
+igc2@church:~/workspace/214/projects/06$ cat array_processing.adb
+-- ArrayProcessing.adb allows a user to store and print values in an array
+--
+-- Input: the array size and the individual values
+-- Precondition: the input values are doubles
+-- Output: prints out the values contained in array
+--
+-- Author: Ian Christensen, CS 214 at Calvin College
+-- Date: Spring, 2018
+
+with Ada.Text_IO, Ada.Integer_Text_IO, Ada.Float_Text_IO;
+use Ada.Text_IO, Ada.Integer_Text_IO, Ada.Float_Text_IO;
+
+procedure array_processing is
+	type Vector is array (Positive range <>) of Float;
+	size : Integer;
+	input : Float;
+
+begin
+	New_Line;
+	Put("Enter the size of the array: ");
+	Get(size);
+	declare
+	anArray : Vector(1..size);
+
+	-- Function: prompts the user to specify the array values
+	-- Parameters: array[], an array of doubles && size, an integer
+	-- Preconditions: user inputs are doubles
+	-- Returns: values within array
+	procedure readArray(anArray : in out Vector) is
+		begin
+			for I in anArray'Range loop
+				New_Line;
+				Put("Enter a value to store at index" & Integer'Image(I) & ": ");
+				Get(input);
+				anArray(I) := input;
+			end loop;
+		end readArray;
+
+	-- Function: prints an arrays values
+	-- Parameters: array[], an array of doubles && size, an int
+	-- Preconditions: array contains values
+	-- Returns: prints out the values contained in array
+	procedure printArray(anArray : in Vector) is
+		begin
+			if anArray'Length = 0 then
+				New_Line;
+				Put("Your array is empty!");
+				New_Line;
+			end if;
+			for I in anArray'Range loop
+				New_Line;
+				Put("The value at input #" & Integer'Image(I) & " is: " & Float'Image(anArray(I)));
+				New_Line;
+			end loop;
+		end printArray;
+
+begin
+	readArray(anArray);
+	printArray(anArray);
+	New_Line;
+end;
+end array_processing;
+igc2@church:~/workspace/214/projects/06$ make
+gcc -c array_processing.adb
+gnatbind -x array_processing.ali
+gnatlink array_processing.ali
+igc2@church:~/workspace/214/projects/06$ ./array_processing
+
+Enter the size of the array: 0
+
+Your array is empty!
+
+igc2@church:~/workspace/214/projects/06$ ./array_processing
+
+Enter the size of the array: 5
+
+Enter a value to store at index 1: 0
+
+Enter a value to store at index 2: -5
+
+Enter a value to store at index 3: .000005
+
+Enter a value to store at index 4: 12345
+
+Enter a value to store at index 5: 23.456
+
+The value at input # 1 is:  0.00000E+00
+
+The value at input # 2 is: -5.00000E+00
+
+The value at input # 3 is:  5.00000E-06
+
+The value at input # 4 is:  1.23450E+04
+
+The value at input # 5 is:  2.34560E+01
+
+igc2@church:~/workspace/214/projects/06$ exit
+
+Script done on Wed 14 Mar 2018 04:06:58 PM EDT
+;;; ArrayProcessing.java allows a user to store and print values in an array
+;;;
+;;; Input: the array size and the individual values
+;;; Precondition: the input values are doubles
+;;; Output: prints out the values contained in array
+;;;
+;;; Author: Ian Christensen, CS 214 at Calvin College
+;;; Date: Spring, 2018
+
+  "Function: prompts the user to specify the array values
+   Parameters: array[], an array of doubles; size, an int
+   Preconditions: user inputs are doubles
+   Returns: values within array "
+(defun readArray (array size)
+  (setq i 0)
+  (while (> size i)
+    (aset array i (string-to-number (read-string "Enter a value to store: ")))
+    (setq i (+ i 1))
+  )
+)
+
+;tests
+readArray
+
+(readArray [1 2 3] 3)
+
+nil
+
+  "Function: prints an arrays values
+   Parameters: array[], an array of doubles; size, an int
+   Preconditions: array contains values
+   Returns: prints out the values contained in array"
+(defun printArray(array)
+  (eval array)
+)
+
+;tests
+printArray
+
+(printArray [1 2 3])
+
+[1 2 3]
+
+(defun main (size)
+  (interactive "\nnEnter the size of the array: ")
+  (setq array (make-vector size 0))
+  (readArray array size)
+  (printArray array)
+)
+
+;tests
+main
+
+(main 3)
+
+[1 2 3]
+
+(main 4)
+
+[124436 -233645 35.657 2453]
+
+(main 0)
+
+[]
+Script started on Fri 09 Mar 2018 03:45:04 PM EST
+igc2@thompson:~/workspace/214/projects/06$ cat array_processing.rb
+#!/usr/bin/ruby
+# ArrayProcessing.rb allows a user to store and print values in an array
+#
+# Input: the array size and the individual values
+# Precondition: the input values are doubles
+# Output: prints out the values contained in array
+#
+# Author: Ian Christensen, CS 214 at Calvin College
+# Date: Spring, 2018
+
+# Function: prompts the user to specify the array values
+# Parameters: array[], an array of doubles && size, an int && keyboard, a keyboard object
+# Preconditions: user inputs are doubles
+# Returns: values within array
+def readArray(array, size)
+	for i in 1..size
+		print "\nEnter a value to store at index #{i}: "
+		array[i] = gets.chomp.to_f
+	end
+end
+
+# Function: prints an arrays values
+# Parameters: array[], an array of doubles && size, an int
+# Preconditions: array contains values
+# Returns: prints out the values contained in array
+def printArray(array, size)
+	for i in 1..size
+		puts "\nThe value at index #{i} is: #{array[i]}"
+	end
+	puts "\n"
+end
+
+if __FILE__ == $0
+	print "\nEnter the size of the array: "
+	size = gets.chomp.to_i
+	array = Array.new(size)
+	readArray(array, size)
+	printArray(array, size)
+end
+igc2@thompson:~/workspace/214/projects/06$ ruby array_processing.rb
+
+Enter the size of the array: 3
+
+Enter a value to store at index 1: -16934.08927
+
+Enter a value to store at index 2: 14987. 
+
+Enter a value to store at index 3: .09435029
+
+The value at index 1 is: -16934.08927
+
+The value at index 2 is: 14987.0
+
+The value at index 3 is: 0.09435029
+
+igc2@thompson:~/workspace/214/projects/06$ exit
+
+Script done on Fri 09 Mar 2018 03:46:04 PM EST

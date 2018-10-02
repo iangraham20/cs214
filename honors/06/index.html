@@ -1,0 +1,155 @@
+<HTML>
+<HEAD>
+<TITLE> CS 214 Lab 6: Perl</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<H2>
+<A HREF="../..">CS 214</A>
+Lab 6: Perl
+</H2>
+<HR>
+<p>Today we'll be looking at one of Perl's primary data structures:
+the <tt>Array</tt> class. 
+It's important to remember that <tt>Array</tt> is in fact a class,
+much like <tt>Scalar</tt> or <tt>Hash</tt>, 
+and not a simple primitive.
+This means that like any other Perl object,
+it has an host of subroutines built right in. 
+Included in these subroutines are several iteration subroutines that will
+come in useful when we get around to finding 
+the sum of our array.</p>
+
+<h4>Array Declarations</h4>
+ <p>
+A Perl array can be defined using the form:
+</p><pre>
+   ArrayDec        ::=   <b>@</b> <b>identifier</b> Initializer
+   Initializer     ::=   &#8709; | <b> = (</b> ExpressionList <b>)</b> | <b> = undef</b>
+   ExpressionList  ::=   &#8709; | Expression MoreExpressions
+   MoreExpressions ::=   &#8709; | <b>,</b> Expression MoreExpressions
+</pre>
+
+Using this information, define <em>array1</em>
+as an array of four <tt>double</tt> values: 9.0, 8.0, 7.0 and 6.0.
+<p></p> <p>
+When that compiles correctly,
+use the information to define <em>array0</em>
+as an array containing no values (keep in mind 
+you can simply leave out any assignment).
+</p> <p>
+Note that arrays are <em>objects</em> in Perl,
+so our variables <em>array0</em> and <em>array1</em> 
+are handles that store references to array objects.
+An array variable's value can thus be <tt>undef</tt>,
+as indicated in the second <tt>Initializer</tt> production.
+</p> <p>
+Continue when both declarations compile correctly.
+</p>
+<pre>
+   perl average.pl
+</pre>
+<h4>Subroutines with Array Parameters</h4>
+<p>
+Now that we have defined an array, let's work on the
+<tt>average()</tt> subroutine. 
+Since Perl has 'smart' arrays that know their size,
+the <tt>average()</tt> subroutine needs to receive the array, 
+and nothing else.
+<p>
+Once our subroutine has the array,
+it needs to see if there's anything in it. 
+This is easy to do with an <tt>if</tt> statement. 
+Simply use a <tt>!</tt> character to check if the array 
+has any elements.
+You'll want to return <tt>0.0</tt> if the array is empty, 
+which can be done with the <tt>return</tt> keyword or by 
+simply placing <tt>0.0</tt> on the last line that will be 
+executed. 
+<p>
+If the array is not empty, then you'll need to return
+the sum of the array's values divided by the number of values 
+it contains.
+We can determine the number of values in an array by converting
+the array to a <tt>scalar</tt> object:
+<pre>
+   scalar @array
+</pre>
+To compute the array's sum, we will define function <tt>sum()</tt>
+to go through each element in the array and add it 
+to a <tt>$total</tt> variable.
+We could do this in the usual way: using a for loop and the
+subscript subroutine <tt>[ ]</tt>.
+However, Perl provides a better way that is worth mastering:
+the <tt>Array</tt> class's <tt>each</tt> subroutine. 
+Since this is a pretty important subroutine of the <tt>Array</tt> class,
+let's look at it using a BNF:</p>
+
+<pre>
+   ArrayForEachStmt ::= <b>foreach my $identifier (@identifier) {</b> StatementList <b>}</b>
+</pre>
+When an <tt>each</tt> message is sent to an array,
+the <tt>Statement</tt> or <tt>StatementList</tt> is performed for
+each item in the array, and those statements
+can access the item using the variable declared in the 
+foreach statement.
+<p>
+Use a <tt>total</tt> variable and
+the <tt>foreach</tt> subroutine,
+to compute the sum of the array.
+If you first initialize your <tt>total</tt> variable to zero,
+the body of your sum() subroutine can be as short as 5 lines.
+You can test your subroutine by uncommenting the <tt>say</tt> statements
+in the <tt>main()</tt> function that invoke <tt>sum()</tt>.
+<p>
+Once you can compute the sum of the values in an array,
+finding the average is as simple as implementing this algorithm:
+<PRE>
+   If the number of values in <EM>anArray</EM> &lt;= 0,
+      Return 0.0.
+   Otherwise,
+      Return the sum of the values in <EM>anArray</EM> / the number of values in <EM>anArray</EM>.
+</PRE>
+Then test your function by uncommenting the 
+appropriate statements in the <tt>main()</tt> subroutine.
+<p>
+When your function is correct,
+use <tt>script</tt> to create a file in which you
+list your program and then run it to demonstrate its correctness.
+<p>
+That concludes the Perl part of this lab. 
+<p>
+If this was your last exercise, return to the
+<a href="../">lab 06</a> page and follow the 
+"Turn In" instructions there.
+<p>
+<hr>
+<p>
+<a href="http://www.calvin.edu/">Calvin</a> &gt;
+<a href="http://cs.calvin.edu/">CS</a> &gt;
+<a href="../../../">214</a> &gt;
+<a href="../../">Labs</a> &gt;
+<a href="../">06</a> &gt;
+Perl
+<p>
+<hr>
+<FONT SIZE=-1>
+This page maintained by
+<A HREF="http://www.calvin.edu/~adams">Joel Adams</A>.
+</FONT>
+<script>
+	(function(i, s, o, g, r, a, m) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function() {
+			(i[r].q = i[r].q || []).push(arguments)
+		}, i[r].l = 1 * new Date();
+		a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore(a, m)
+	})(window, document, 'script',
+		'//www.google-analytics.com/analytics.js', 'ga');
+	ga('create', 'UA-864318-1', 'calvin.edu');
+	ga('send', 'pageview');
+</script>
+</BODY>
+</HTML>

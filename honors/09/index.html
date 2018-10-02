@@ -1,0 +1,261 @@
+
+<HTML>
+<HEAD>
+ <TITLE> CS 214 Lab 9: Perl</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+<H2>
+ <A HREF="../../..">CS 214</A> Lab 9: Perl
+</H2>
+<HR>
+<p>
+Perl does provide a <tt>List</tt> data structure of sorts,
+but it is essentially the array data structure with support 
+for a few extra operations (for example a perl array supports 
+push, pop, shift, and unshift, which all add or remove items 
+to the beginning or end of the array). so we will need to build 
+our own <tt>Linked List</tt> to complete this lab exercise.
+<P>
+Begin by making a <TT>Perl</TT> subdirectory in your <TT>labs/09</TT>
+directory.
+Then copy the files <em>list_tester.pl</em> and <em>MyList.pm</em>
+from the course <TT>labs/09/Perl</TT> directory into your new directory.
+Use your favorite text editor to open these files,
+and take a moment to study their contents.
+<p>
+The file <em>MyList.pm</em> contains a skeleton for package <TT>MyList</TT>.
+Look over its contents carefully, to get a sense for what has been
+done, and what remains to be done...
+<P>
+<B>Building A Perl List Type</B>.
+Since a list consists of linked nodes, we might begin by creating a 
+<TT>Node</TT> type that stores an integer 
+and a pointer to a <TT>Node</TT>:
+<PRE>
+   <b>package MyNode;</B>
+</PRE>
+Find the appropriate comment within the <tt>MyList</tt> package
+and replace it with this declaration.
+
+<b>Node Instance Variables</b>.
+As we have seen before, Perl does not require us to declare
+instance variables; we need only name them in methods.
+Since our <tt>MyNode</tt> package needs two instance variables
+-- one to store the value and one to store the link to the next node --
+we might proceed by defining constructor for our <tt>MyNode</tt> package:
+<pre>
+   package myNode;
+
+<b>sub new {
+    my ($class, $item, $link) = @_;
+    my $self = bless {myValue => $item, myNext => $link}, $class;
+    $self;
+  }</b>
+</pre>
+And that's it. Perl does not provide any way of keeping instance variables 
+private so we do not need to make and getter or setter methods (we could if 
+we wanted to use an informal method of keeping the variables private).
+
+This gives us a <tt>MyNode</tt> package that we can use
+in our <tt>MyList</tt> methods, and if necessary, we can always return
+later and modify it.
+<p>
+<b>List Instance Variables</b>.
+Switch for a moment to <em>list_tester.pl</em> and note that
+the program does these things:
+<ol>
+ <li>
+   it requires our <tt>MyList</tt> package,
+ <li>
+   it constructs empty <TT>MyList</TT> objects,
+ <li>
+  it appends values to them,
+ <li>
+  it  prints them, and 
+ <li>
+  it finds their maximum values.
+</ol>
+These provide us with a road map for what we need to do in the
+remainder of this exercise.
+<p>
+Our next task is thus to define a <tt>MyList</tt> constructor.
+Again referring to the <tt>append()</tt> method, we see that
+our <TT>MyList</TT> has three instance variables for the constructor
+to initialize:
+<UL>
+ <LI>
+   <TT>myFirst</TT>, a reference to the first node in the list, and
+  <LI>
+    <TT>myLast</TT>, a reference to the last node in the list;
+  <li>
+   <TT>myLength</TT>, an integer storing the number of values in the list.
+</UL>
+In Perl, <tt>undef</tt> is the equivalent of null pointer in C++.
+<p>
+Using this information, add a <TT>new</TT> method
+to the <tt>MyList</tt> package that initializes
+<tt>myFirst</tt> and <tt>myLast</tt> to <tt>undef</tt>
+and <tt>myLength</tt> to zero.
+<p>
+
+<P>
+<B>Defining a Print Method</B>.
+To display the values in a <TT>MyList</TT>, we will write a method
+that traverses the list, displaying each of its values in turn.
+In <em>MyList.pm</em>, scan through its contents
+until you reach the documentation for the <TT>print</TT> method.
+There, we can create a stub method named <TT>print</TT>,
+that satisfies the specification given back in 
+<A HREF="..">the introduction</A>:
+<PRE>
+   package MyList; 
+      ...
+    <b>sub print {
+      }</b>
+      ...
+</PRE>
+To fill in this stub, we can use the following algorithm to 
+traverse the <tt>List</tt>:
+<PRE>
+   1. Define a local variable named <em>$temp</em>
+      and initialize it to refer to the first node.
+   2. While <EM>$temp</EM> is not undef:
+       a. Display the value of <EM>$temp</EM>'s node.
+       b. Advance <EM>$temp</EM> to the next node (if any).
+</PRE>
+Perl does not have pointer variables as a distinct type like C++.
+Instead, it is more like Java, in that variables that refer to
+objects (i.e., instances of classes) are <em>reference</em> 
+or pointer variables under the hood.
+Unlike Java, Perl has no primitive types, so all Perl types are classes,
+which means that all Perl variables are really pointers.
+So Perl does not require us to do anything unusual to define,
+initialize, assign or compare pointer variables/values
+other than what we have seen previously.
+Using this information, we can declare <TT>$temp</TT>,
+and initialize it to the address of our first node,
+which is stored in <tt>myFirst</tt>:
+<PRE>
+   package MyList;
+      ...
+      sub printList {
+     <b>my $self = shift;
+        my $temp = $self->{myFirst};</b>
+      }
+      ...
+</PRE>
+<P>
+To perform step 2 of our algorithm, we can use Perl's pretest loop.
+For its condition, we can use the <tt>nil?</tt> method --
+a message that can be sent to any Perl object -- which returns true
+if the object's value is <tt>nil</tt> and returns false otherwise.
+We can thus construct a loop to traverse our <TT>List</TT>
+as follows:
+<PRE>
+   package MyList;
+      ...
+      sub printList {
+        my $self = shift;
+        my $temp = $self->{myFirst};
+     <b>while ($temp != undef) {
+        }
+     </b>
+      }
+      ...
+</PRE>
+Within this loop, we can add statements to display the
+<TT>value</TT> member of the node pointed to 
+by <TT>$temp</TT>, and to change the value of <TT>$temp</TT>
+to the value of the <TT>next</TT> member of the node
+to which <TT>$temp</TT> points.
+Since using <tt>print</tt> to display a <tt>Node</tt>'s value
+could be a recursive call and produce a runaway recursion,
+we have named our print function <tt>printList</tt> instead of 
+<tt>print<tt> so that we can use perl's print function:
+<PRE>
+   package List; 
+      ...
+        sub printList {
+          my $self = shift;
+          my $temp = $self->{myFirst};
+          while ($temp != undef) {
+            print(" ", $temp->{myValue});
+            $temp = $temp->{myNext};
+          }
+        }
+      ...
+<p>
+If we have not made any mistakes, our method to display
+the values in a <tt>MyList</tt> should now be complete,
+and you should be able to run the program in <em>list_tester.pl</em>
+to test what you have done thus far.
+<p>
+<B>Finding the Maximum Value in a List</B>.
+ If necessary take a moment to review the
+ <A HREF="..">specification</A> for this operation.
+ To find the maximum value in a list, we can use this algorithm:
+   1. Initialize a variable named <EM>$temp</EM> to the address of our first node.
+   2. Initialize <EM>$maxValue</EM> to a very negative integer (e.g., -999999).
+   3. While <EM>$temp</EM> is not undef:
+       a. If the value of <EM>$temp</em>'s node is greater than <EM>$maxValue</EM>,
+             Change <EM>$maxValue</EM> to the value of <EM>$temp</em>'s node.
+       b. Advance <EM>$temp</EM> to the next node (if any).
+   4. Return <EM>$maxValue</EM>.
+Using everything you have learned thus far, find the documentation
+for the <tt>listMax</tt> method within package <tt>MyList</tt>.
+There, define a Perl method that implements this algorithm.
+<P>
+<B>Testing</B>.
+To test the correctness of your work,
+uncomment the lines in <em>list_tester.pl</em> that invoke the
+<tt>listMax</tt> method.
+Save your changes, run <em>list_tester.pl</em>, and continue
+when everything works correctly.
+<P>
+<b>Turn In</b>.
+When all is correct,
+create a script file in which you
+(i) run your program to show that it works correctly, and
+(ii) use <TT>cat</TT> to display the contents of both your  
+<tt>.pl</tt> and your <tt>.pm</tt> files.
+<P>
+That concludes the Perl part of this lab.
+<p>
+If this was your last exercise, return to the
+<a href="../">lab 09</a> page and follow the 
+"Turn In" instructions there.
+<P>
+<HR>
+<p>
+<a href="http://www.calvin.edu/">Calvin</a> &gt;
+<a href="http://cs.calvin.edu/">CS</a> &gt;
+<a href="../../../">214</a> &gt;
+<a href="../../">Labs</a> &gt;
+<a href="../">09</a> &gt;
+Perl
+<p>
+<HR>
+<FONT SIZE=-1>
+This page maintained by
+<A HREF="http://www.calvin.edu/~adams">Joel Adams</A>.
+</FONT>
+</HR>
+</p>
+<script>
+	(function(i, s, o, g, r, a, m) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function() {
+			(i[r].q = i[r].q || []).push(arguments)
+		}, i[r].l = 1 * new Date();
+		a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore(a, m)
+	})(window, document, 'script',
+		'//www.google-analytics.com/analytics.js', 'ga');
+	ga('create', 'UA-864318-1', 'calvin.edu');
+	ga('send', 'pageview');
+</script>
+</BODY>
+</HTML>

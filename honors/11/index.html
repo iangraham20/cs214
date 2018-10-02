@@ -1,0 +1,492 @@
+
+<HTML>
+<HEAD>
+ <TITLE> CS 214 Lab 11: Multithreading in Perl</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+<H2>
+ <A HREF="../../..">CS 214</A>
+  Lab 11: Multithreading in Perl 
+</H2>
+<HR>
+<P>
+Since we will be dealing with multiple files,
+begin by creating a new subdirectory named <TT>Perl</TT>
+within your directory for this lab.
+Then copy the file 
+<a href="array_sum.pl"><em>array_sum.pl</em></a> 
+into your new directory.
+Use your favorite text editor to open this file,
+customize its opening documentation, and take a moment to study 
+what it is doing and how it is doing it.
+<p>
+Since we have the sum of the values in each input file
+recorded in our spreadsheet, let's begin by running
+the program to make sure that it produces correct results.
+<p>
+In your spreadsheet, add a column labeled <em>Perl</em>.
+Using the <tt>perl</tt> command,
+verify that <em>array_sum.pl</em> produces the correct sum
+for each file in:
+<pre>
+   /home/cs/214/labs/11/numbers/
+</pre>
+If it does, run the program three times for each file,
+and record the middle of the three execution times in your spreadsheet
+in the appropriate cells of your <em>Perl</em> column.
+These values, computed with a single thread,
+will provide us with a baseline against which
+we can compare the speedup provided by multithreading.
+<p>
+<b>Preliminaries</b>.
+Before we delve into multithreading in Perl,
+let's first look at some of the details of how <em>array_sum.pl</em>
+is doing what it does.
+<p>
+<b>Command-Line Arguments in Perl</b>.
+Perl programs have a built-in array constant named <tt>ARGV</tt>,
+that provides access to any command-line arguments.
+In particular:
+<ul>
+ <li>
+  <tt>scalar @ARGV</tt> provides the number of
+   arguments specified on the command-line.
+   Note that unlike C/C++, Perl does not count the name of the program
+   as one of the arguments.
+ <li>
+  <tt>$ARGV[<em>$i</em>]</tt> can be used to retrieve
+   a <tt>String</tt> containing the command-line 
+   argument whose index is <tt><em>$i</em></tt>.
+   Perl's array indices begin with 0.
+</ul>
+Find where each of these are used in <em>array_sum.pl</em> and make certain
+you understand how they are being used before proceeding.
+<p>
+<b>Reading the Numbers</b>.
+Perl provides dynamic arrays, which our <tt>readFile</tt> function uses
+to store the values it reads from the input file.
+Our approach is a bit unusual though: 
+instead of reading the file line by line into an integer array,
+we first use Perl's <tt>open(LINES, "<", $arg)</tt> method to open the file, 
+and then <tt>my @strArray = <LINES>;<tt> to read all of the lines from the file 
+into a variable named <tt>@strArray</tt>.
+Then, since the first line of the input file contains the number
+of values to be processed, the first item in <tt>strArray</tt>
+is the number of integers we need to store,
+so we use that information to allocate an array named <tt>intArray</tt>
+that is the correct size.
+Once we have our <tt>intArray</tt> allocated, we use a foreach loop to convert
+the remaining strings in <tt>strArray</tt> into integers,
+which we store in <tt>intArray</tt>.
+The function then lists <tt>intArray</tt> as its final value,
+making it the <tt>readFile</tt> function's return value.
+<p>
+<b>Timing the Operation</b>
+<p>
+To determine the execution time of function <tt>sum()</tt>,
+we can use Perl's <tt>Time::HiRes</tt> class, which 
+(among other things) provides:
+<ul>
+ <li>
+  A <tt>Time</tt> type representing the current date and time.
+ <li>
+  The <tt>gettimeofday</tt> method, which returns the current time.
+  We use it to declare variables in which 
+  to store the times before and after we call <tt>sum()</tt>.
+ <li>
+  The <tt>-</tt> operator, which lets us compute the difference of
+   two <tt>Time</tt> values.
+ <li>
+  The <tt>to_f</tt> method that, sent to a <tt>Time</tt> object,
+   converts it to a floating point (real) number.
+ </ul> 
+Find each of these features in the program and make sure that you
+understand how and why they are being used before continuing.
+<p>
+<P>
+<B>Multithreading in Perl</B>.
+Perl provides a <tt>Thread</tt> class, to which we can pass
+a block containing the instructions we want that thread to perform.
+<p>
+Begin by making a copy of <em>array_sum.pl</em> and name the copy
+<em>threaded_array_sum.pl</em>.
+Then open <em>threaded_array_sum.pl</em> and customize its
+opening documentation, the name of the program, etc.
+<p>
+Since the existing <tt>sum()</tt> function
+sums the entire array, let's begin by modifying it
+for multithreading
+to sum a slice of the array, based on its thread's ID
+and the size of its slice.
+For the sake of readability, let's rename it <tt>sumSlice()</tt>
+and modify it so that it follows
+the algorithm we gave in this exercise's introduction:
+<pre>
+   ...
+   sub <font color="#FF0000"><b>sumSlice</b></font> {
+   <font color="#FF0000"><b>my ($id, $sliceSize</b></font>, @values) = @_;
+      <font color="#FF0000"><b>my $start = $id * $sliceSize;
+      my $stop = $start + $sliceSize - 1</b></font>
+      <font color="#FF0000"><b>myTotal</b></font> = 0;
+      foreach my $i <font color="#FF0000"><b>($start..$stop) {</b></font>
+         <font color="#FF0000"><b>$myTotal</b></font> += $values[$i];
+      }
+      <font color="#FF0000"><b>myTotal</b></font>
+   }
+   ...
+</pre>
+Our revised method receives the thread ID
+and the size of the array-slice it is to sum via its parameters.
+It uses them to compute its starting and stopping index values,
+and then uses those values to drive a for loop that
+accumulates its partial sum
+in a local variable <tt>$myTotal</tt>, which it returns.
+<p>
+Now that we have a function to sum a slice of our array,
+we are ready to proceed with the other revisions
+to the sequential program.
+<p>
+Let's begin by modifying the body of procedure <tt>checkCommandLine</tt>,
+as shown in bold below:
+<pre>
+  sub checkCommandLine {
+    if (scalar @ARGV != <font color="#FF0000"><b>2</b></font>) {
+      say "\nUsage: sum <inFileName> <numThreads>\n\n";
+      exit(1);
+    }
+  }
+
+</pre> 
+Function <tt>readFile()</tt> remains unchanged.
+<p>
+However, in our <tt>main</tt> function,
+we need to replace the call to <tt>sum()</tt> with code that will 
+sum the array using multiple threads.
+Since this sounds complicated, let's do it in a new method we will call
+<tt>sumInParallel()</tt>:
+<pre>
+  <font color="#FF0000"><b>sub sumInParallel(values, numThreads)
+      my ($numThreads, @values) = @_;
+      my $sliceSize = int(scalar @values / $numThreads);
+      my @threadArray;
+      $threadArray[$numThreads] = undef;
+      my $result :shared = 0;
+      my $mutex :shared;
+<!---
+      for i in 1..numThreads-1
+-->
+      foreach my $i (1..$numThreads-1) {
+        $threadArray[$i] = threads->create(
+          sub { 
+            my $myTotal = sumSlice($i, $sliceSize, @values);
+            { lock($mutex); $result += $myTotal; }
+          }
+        );
+      }
+
+      my $myTotal = sumSlice(0, $sliceSize, @values);
+
+      my $leftovers = scalar @values % $numThreads;
+      if ($leftovers > 0) {
+        foreach my $i (scalar @values - $leftovers..scalar @values - 1) {
+          $myTotal += $values[$i];
+        }
+      }
+
+      { lock($mutex); $result += $myTotal; }
+
+      foreach my $i (1..$numThreads-1) {
+        $threadArray[$i]->join();
+      }
+      $result;
+}</b></font>
+</pre>
+This function receives from its caller the array of values to be summed, 
+plus the number of threads to be used to sum the array.
+We start by computing the size of our slice,
+using the approach from our introduction:
+<pre>
+   my $sliceSize = int(scalar @values / $numThreads);
+</pre>
+Since the user is passing the desired number of threads to our program
+via a command-line argument,
+we cannot know many threads are needed.
+We use the standard workaround:
+build a <em>dynamic array of threads</em>:
+<pre>
+   ...
+   my @threadArray;
+   $threadArray[$numThreads] = undef;
+   ...
+</pre>
+Then, we define our <tt>$result</tt> variable that we will use
+to communicate our grand total back to the caller:
+<pre>
+   my $result :shared = 0
+</pre>
+<p>
+We need some way of letting each thread communicate its partial result 
+back to our original thread.
+Perl does not have a <tt>reduction</tt> operation like OpenMP,
+nor does it have synchronized entry procedures like Ada.
+One approach might be to have
+each thread add the values in its slice to <tt>$result</tt>
+one at a time:
+<pre>
+   $result += $values[$i];     # DON'T do this
+</pre>
+This is a bad idea, because
+we would get lots of write-write conflicts,
+since the threads will all be trying to write to our shared 
+<tt>result</tt> variable at the same time.
+Moroever, this approach would require a write to the shared variable
+for each entry in the array -- 
+if our array is length <em>N</em>,
+it would require <em>O(N)</em> writes to the shared variable,
+and synchronizing all of those writes would greatly slow
+our function.
+<p>
+Instead, we will have each thread accumulate its partial sum
+in a local variable called <tt>$myTotal</tt>.
+When it is finished computing the partial sum,
+we have each thread add that partial sum
+to <tt>$result</tt>:
+<pre>
+   $result += $myTotal     # OK, if synchronized
+</pre>
+This approach requires just one write to the shared variable per thread,
+so for <em>T</em> threads, we will need just <em>O(T)</em>
+synchronizations.
+To facilitate those synchronizations, we declare a <tt>lock</tt>
+object named <tt>$mutex</tt>:
+<pre>
+   my $mutex :shared;
+</pre>
+</p><p>
+We might visualize this approach as follows:
+<p>
+<center>
+<img src="../images/7.Perl-exclusive.png"
+     width="672" height="400"
+     alt="Using a shared variable">
+</center>
+<p>
+Once we have an array of threads, a shared <tt>result</tt> variable,
+a <tt>Mutex</tt> to synchronize the accesses to it,
+and the size of the array-slice a thread is to sum,
+we use an <tt>foreach</tt> loop to launch the threads:
+<pre>
+   ...
+    foreach my $i (1..$numThreads-1) {
+      $threadArray[$i] = threads->create(
+        sub { 
+          my $myTotal = sumSlice($i, $sliceSize, @values);
+          { lock($mutex); $result += $myTotal; }
+        }
+      );
+    }
+   ...
+</pre>
+If the user specifies that <em>T</em> threads are to be used,
+this loop will launch <em>T</em>-1 new threads,
+each using method <tt>sumSlice()</tt> to add up the values in its
+slice of the <tt>@values</tt> array,
+and then storing that partial sum in <tt>$myTotal</tt>.
+Once it has accomplished that, it must add the partial sum in
+<tt>$myTotal</tt> to the shared <tt>$result</tt> variable.
+To prevent write-write conflicts, these writes to <tt>$result</tt>
+must be synchronized.
+Perl provides a variety of ways to do this;
+here we use the <b><tt>lock()</tt> block</b>
+(shown above), which uses our <tt>lock</tt> object named <tt>$mutex</tt>
+to ensure that only one thread
+at a time will perform the statement(s) within its block.
+By wrapping each thread's write to the shared variable <tt>$result</tt>
+in a <tt>synchronize</tt> block, we synchronize the accesses to it,
+and thus prevent write-write conflicts from occurring.
+<p>
+Note that we give the first thread ID 1, because the
+(original) thread that is launching these threads
+will receive ID 0.
+<p>
+With that done, our threads are now off and running, each
+summing its own slice of the array.
+<p>
+Our original thread can then sum up the values in its slice,
+using ID 0, and storing its partial sum in its own local variable 
+<tt>myTotal</tt>:
+<pre>
+   ...
+   my $myTotal = sumSlice(0, $sliceSize, @values);
+   ...
+</pre>
+With its slice summed, it then adds
+any left-overs to the partial sum in its <tt>$myTotal</tt> variable:
+<pre>
+      ...
+      my $leftovers = scalar @values % $numThreads;
+      if ($leftovers > 0) {
+        foreach my $i (scalar @values - $leftovers..scalar @values - 1) {
+          $myTotal += $values[$i];
+        }
+      }
+      ...
+</pre>
+Since the number of left-over values will be less than
+the number of tasks, this will not take very long,
+provided the array is much larger than
+the number of threads we are using.
+<p>
+With the sum of thread 0's slice plus the left-overs accumulated in 
+its <tt>$myTotal</tt> variable, 
+our original thread just has to add this value to the shared
+<tt>$result</tt> variable.
+Since another thread could also be adding its partial sum to
+<tt>$result</tt>, this write must be synchronized:
+<pre>
+  { lock($mutex); $result += $myTotal; }
+</pre>
+However, in Perl, if our original thread should happen to finish
+before the helper threads, all of those threads will terminate,
+without having finished their tasks.
+To prevent this, 
+the original thread must make certain that the helper threads
+have finished summing their array-slices before it returns
+the value in <tt>$result</tt>.
+We accomplish this using the <tt>join()</tt> method:
+<pre>
+   ...
+      foreach my $i (1..$numThreads-1) {
+        $threadArray[$i]->join();
+      }
+      $result;
+    }
+</pre>
+A message <tt><em>t</em>->join()</tt> causes the thread
+that <b>sends</b> that message (i.e., our original thread)
+to suspend until thread <tt><em>t</em></tt> terminates. 
+(If the thread has already terminated, our original thread
+keeps going to the next repetition of the loop.)
+Once thread <em>t</em> terminates, our original thread 
+resumes execution where it left off.
+The <tt>join()</tt> method is thus a simple way
+to synchronize two threads.
+<p>
+By using a for loop to iterate through our thread array, 
+sending each thread therein the <tt>join()</tt> message,
+we ensure that all threads have terminated before we return
+<tt>result</tt>.
+<p>
+Note that for <em>T</em> threads and an array of length <em>N</em>, 
+the cost of this parallel sum operation is <em>O(N/T + T)</em>,
+where <em>O(N/T)</em> is the cost of computing the partial sums,
+and <em>O(T)</em> is the cost of adding up those partial sums.
+By contrast, the cost of our parallel sum in C++ using OpenMP's
+<tt>reduction</tt> mechanism was <em>O(N/T +
+log<sub>2</sub>(T))</em>,
+since the <tt>reduction</tt> can be done in time
+<em>log<sub>2</sub>(T)</em>.
+So long as <em>T</em> is small and <em>N</em> is large,
+the size of the array will be the dominant factor and
+the two approaches should perform similarly.
+However, if we are on a computer with many cores and increase
+<em>T</em> significantly, the logarithmic <tt>reduction</tt>
+approach will scale better than linear approach we used here.
+<p>
+All that is left is a minor modification to the body
+of our <tt>main</tt> function:
+<pre>
+  sub main {
+    checkCommandLine;
+    my @values = readFile;
+    my $startTime = [gettimeofday];
+    my $total = <font color="#FF0000"><b>sumInParallel($ARGV[1], @values);</b></font>
+    my $endTime = [gettimeofday];
+    my $interval = tv_interval($startTime, $endTime);
+    say "\nThe sum is $total\n";
+    printf(" and computing it took %.9f seconds.\n\n", $interval);
+  }
+</pre>
+Note that we must convert the command-line argument (a string)
+to an integer before we can pass it to our <tt>sumInParallel()</tt>
+function's integer parameter.
+We use Perl's <tt>int()</tt> class constructor to perform this
+conversion.
+<p>
+<b>Testing</b>.
+Save your changes and use <tt>Perl</tt> to 
+run <em>threaded_array_sum</em> on the input files from the
+course directory.
+Begin with the largest input file and 4 threads:
+<pre>
+   threaded_array_sum /home/cs/214/adams/labs/11/numbers/1000000numbers.txt 4
+</pre>
+Do you get the correct result? 
+If not, debug your program and continue when you do.
+<p>
+<b>Performance Analysis</b>.
+To see what kind of speedup we are getting,
+add 5 more columns to your spreadsheet, and label them
+<tt>1 2 3 4 5</tt>.
+For each of the input files, 
+run it three times using 1 thread,
+and record the median (middle) time in the appropriate row 
+of your spreadsheet under column 1.
+How does the time for <em>threaded_array_sum.pl</em> using 1 
+thread compare to the time for <em>array_sum.pl</em>?
+<p>
+Repeat this procedure using 2, 3, 4, and 5 threads and 
+record the middle times in the appropriate spreadsheet cells.
+In your spreadsheet, answer the following questions:
+<p>
+<font color="#FF0000">
+Perl.1. How does the time using <em>threaded_array_sum.pl</em> and 1
+thread compare to the time using <em>array_sum.pl</em>?
+<p>
+Perl.2. How do the times using T > 1 threads
+compare to the times using a single thread?
+Explain what is happening.
+<p>
+Perl.3. How do your Perl times compare to your Java times?
+<p>
+Perl.4. How is multithreading in Perl different from our other languages?
+</font>
+<p>
+In your spreadsheet,
+create a three dimensional bar chart that shows
+the performance of <em>threaded_array_sum.pl</em>
+using 1, 2, 3, 4, and 5 threads,
+for the array sizes 1000, 10000, 100000, and 1000000.
+Be sure to give your chart a descriptive title,
+and label all axes appropriately.
+<p>
+<b>Turn In</b>:
+Create a script file in which you use <tt>cat</tt>
+to display <em>threaded_array_sum.pl</em>.
+Then 
+run <em>threaded_array_sum.pl</em>,
+using the file <em>1000000numbers.txt</em> and 1 thread;
+then run <em>threaded_array_sum.pl</em>,
+using the same input file and 4 threads.
+Quit script and print a hard copy of this script file, 
+plus your spreadsheet and its chart.
+<P>
+That concludes the Perl portion of this lab.
+<p>
+<hr>
+<p>
+<a href="http://www.calvin.edu/">Calvin</a> &gt;
+<a href="http://cs.calvin.edu/">CS</a> &gt;
+<a href="../../../">214</a> &gt;
+<a href="../../">Labs</a> &gt;
+<a href="../">11</a> &gt;
+Perl
+<p>
+<hr>
+<FONT SIZE=-1>
+This page maintained by
+<A HREF="http://www.calvin.edu/~adams">Joel Adams</A>.
+</FONT>
+</BODY>
+</HTML>

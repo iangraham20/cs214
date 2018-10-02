@@ -1,0 +1,315 @@
+;;; Tester.el simulates and tests an e-LISP Temperature type
+;;; Author: Ian Christensen, CS 214 at Calvin College
+;;; Date: Spring, 2018
+
+(setq load-path (cons "." load-path))
+
+("." "." "." "/usr/share/emacs24/site-lisp/a2ps" "/etc/emacs24" "/etc/emacs" "/usr/local/share/emacs/24.5/site-lisp" "/usr/local/share/emacs/site-lisp" "/usr/share/emacs24/site-lisp/erlang" "/usr/share/emacs24/site-lisp/dictionaries-common" "/usr/share/emacs24/site-lisp/cmake-data" "/usr/share/emacs/site-lisp/autoconf" ...)
+
+"A simple driver for our Temperature functions"
+(progn
+  (load "/home/igc2/workspace/214/projects/08/e-lisp/Temp.el")
+ 
+t
+
+  (message "Enter a base Temperature: ")
+  (setq baseTemp (fromString))
+  (message "Enter a limit Temperature: ")
+  (setq limitTemp (fromString))
+  (setq increment (string-to-number
+   (read-from-minibuffer "Enter an increment value: ")))
+
+
+  (setq buf (get-buffer "nameTester.el"))
+  (terpri buf)
+  (princ "Celsius   |   Fahrenheit   |   Kelvin")
+  (while (= (lessThan baseTemp limitTemp) 1)
+    (toString (toFahrenheit baseTemp) buf)
+    (princ "   |   ")
+    (toString (toCelsius baseTemp) buf)
+    (princ "   |   ")
+    (toString (toKelvin baseTemp) buf)
+    (terpri buf)
+    (setq baseTemp (raise baseTemp increment)))
+  
+  (terpri buf)
+  (princ "All tests passed!" buf)
+  (terpri buf))
+
+
+Celsius   |   Fahrenheit   |   Kelvin-241.14999999999998 F   |   -273.15 C   |   0 K
+-221.14999999999998 F   |   -253.14999999999998 C   |   20.0 K
+-201.14999999999998 F   |   -233.14999999999998 C   |   40.0 K
+-181.14999999999998 F   |   -213.14999999999998 C   |   60.0 K
+-161.14999999999998 F   |   -193.14999999999998 C   |   80.0 K
+-141.14999999999998 F   |   -173.14999999999998 C   |   100.0 K
+-121.14999999999998 F   |   -153.14999999999998 C   |   120.0 K
+-101.14999999999998 F   |   -133.14999999999998 C   |   140.0 K
+-81.14999999999998 F   |   -113.14999999999998 C   |   160.0 K
+-61.14999999999998 F   |   -93.14999999999998 C   |   180.0 K
+-41.14999999999998 F   |   -73.14999999999998 C   |   200.0 K
+-21.149999999999977 F   |   -53.14999999999998 C   |   220.0 K
+-1.1499999999999773 F   |   -33.14999999999998 C   |   240.0 K
+18.850000000000023 F   |   -13.149999999999977 C   |   260.0 K
+38.85000000000002 F   |   6.850000000000023 C   |   280.0 K
+58.85000000000002 F   |   26.850000000000023 C   |   300.0 K
+78.85000000000002 F   |   46.85000000000002 C   |   320.0 K
+98.85000000000002 F   |   66.85000000000002 C   |   340.0 K
+118.85000000000002 F   |   86.85000000000002 C   |   360.0 K
+
+All tests passed!
+t
+
+Celsius   |   Fahrenheit   |   Kelvin0 F   |   -17.77777777777778 C   |   255.3722222222222 K
+2.5 F   |   -16.38888888888889 C   |   256.76111111111106 K
+5.0 F   |   -15.0 C   |   258.15 K
+7.5 F   |   -13.61111111111111 C   |   259.5388888888889 K
+10.0 F   |   -12.222222222222221 C   |   260.92777777777775 K
+12.5 F   |   -10.833333333333334 C   |   262.31666666666666 K
+15.0 F   |   -9.444444444444445 C   |   263.7055555555555 K
+17.5 F   |   -8.055555555555555 C   |   265.09444444444443 K
+20.0 F   |   -6.666666666666666 C   |   266.4833333333333 K
+22.5 F   |   -5.277777777777778 C   |   267.8722222222222 K
+25.0 F   |   -3.888888888888889 C   |   269.26111111111106 K
+27.5 F   |   -2.5 C   |   270.65 K
+30.0 F   |   -1.1111111111111112 C   |   272.0388888888889 K
+32.5 F   |   0.2777777777777778 C   |   273.42777777777775 K
+35.0 F   |   1.6666666666666665 C   |   274.81666666666666 K
+37.5 F   |   3.0555555555555554 C   |   276.2055555555555 K
+40.0 F   |   4.444444444444445 C   |   277.59444444444443 K
+42.5 F   |   5.833333333333333 C   |   278.9833333333333 K
+45.0 F   |   7.222222222222222 C   |   280.3722222222222 K
+47.5 F   |   8.61111111111111 C   |   281.76111111111106 K
+50.0 F   |   10.0 C   |   283.15 K
+52.5 F   |   11.38888888888889 C   |   284.5388888888889 K
+55.0 F   |   12.777777777777777 C   |   285.92777777777775 K
+57.5 F   |   14.166666666666666 C   |   287.31666666666666 K
+60.0 F   |   15.555555555555555 C   |   288.7055555555555 K
+62.5 F   |   16.944444444444443 C   |   290.09444444444443 K
+65.0 F   |   18.333333333333332 C   |   291.4833333333333 K
+67.5 F   |   19.72222222222222 C   |   292.8722222222222 K
+70.0 F   |   21.11111111111111 C   |   294.26111111111106 K
+72.5 F   |   22.5 C   |   295.65 K
+75.0 F   |   23.88888888888889 C   |   297.0388888888889 K
+77.5 F   |   25.27777777777778 C   |   298.42777777777775 K
+80.0 F   |   26.666666666666664 C   |   299.81666666666666 K
+82.5 F   |   28.055555555555554 C   |   301.2055555555555 K
+85.0 F   |   29.444444444444443 C   |   302.59444444444443 K
+87.5 F   |   30.833333333333332 C   |   303.9833333333333 K
+90.0 F   |   32.22222222222222 C   |   305.3722222222222 K
+92.5 F   |   33.61111111111111 C   |   306.76111111111106 K
+95.0 F   |   35.0 C   |   308.15 K
+97.5 F   |   36.388888888888886 C   |   309.5388888888889 K
+100.0 F   |   37.77777777777778 C   |   310.92777777777775 K
+102.5 F   |   39.166666666666664 C   |   312.31666666666666 K
+105.0 F   |   40.55555555555556 C   |   313.7055555555555 K
+107.5 F   |   41.94444444444444 C   |   315.09444444444443 K
+110.0 F   |   43.333333333333336 C   |   316.4833333333333 K
+112.5 F   |   44.72222222222222 C   |   317.8722222222222 K
+115.0 F   |   46.11111111111111 C   |   319.26111111111106 K
+117.5 F   |   47.5 C   |   320.65 K
+120.0 F   |   48.888888888888886 C   |   322.0388888888889 K
+122.5 F   |   50.27777777777778 C   |   323.42777777777775 K
+125.0 F   |   51.666666666666664 C   |   324.81666666666666 K
+127.5 F   |   53.05555555555556 C   |   326.2055555555555 K
+130.0 F   |   54.44444444444444 C   |   327.59444444444443 K
+132.5 F   |   55.83333333333333 C   |   328.9833333333333 K
+135.0 F   |   57.22222222222222 C   |   330.3722222222222 K
+137.5 F   |   58.61111111111111 C   |   331.76111111111106 K
+140.0 F   |   60.0 C   |   333.15 K
+142.5 F   |   61.388888888888886 C   |   334.5388888888889 K
+145.0 F   |   62.77777777777778 C   |   335.92777777777775 K
+147.5 F   |   64.16666666666667 C   |   337.31666666666666 K
+150.0 F   |   65.55555555555556 C   |   338.7055555555555 K
+152.5 F   |   66.94444444444444 C   |   340.09444444444443 K
+155.0 F   |   68.33333333333333 C   |   341.4833333333333 K
+157.5 F   |   69.72222222222221 C   |   342.8722222222222 K
+160.0 F   |   71.11111111111111 C   |   344.26111111111106 K
+162.5 F   |   72.5 C   |   345.65 K
+165.0 F   |   73.88888888888889 C   |   347.0388888888889 K
+167.5 F   |   75.27777777777777 C   |   348.42777777777775 K
+170.0 F   |   76.66666666666667 C   |   349.81666666666666 K
+172.5 F   |   78.05555555555556 C   |   351.2055555555555 K
+175.0 F   |   79.44444444444444 C   |   352.59444444444443 K
+177.5 F   |   80.83333333333333 C   |   353.9833333333333 K
+180.0 F   |   82.22222222222221 C   |   355.3722222222222 K
+182.5 F   |   83.61111111111111 C   |   356.76111111111106 K
+185.0 F   |   85.0 C   |   358.15 K
+187.5 F   |   86.38888888888889 C   |   359.5388888888889 K
+190.0 F   |   87.77777777777777 C   |   360.92777777777775 K
+192.5 F   |   89.16666666666667 C   |   362.31666666666666 K
+195.0 F   |   90.55555555555556 C   |   363.7055555555555 K
+197.5 F   |   91.94444444444444 C   |   365.09444444444443 K
+200.0 F   |   93.33333333333333 C   |   366.4833333333333 K
+202.5 F   |   94.72222222222221 C   |   367.8722222222222 K
+205.0 F   |   96.11111111111111 C   |   369.26111111111106 K
+207.5 F   |   97.5 C   |   370.65 K
+210.0 F   |   98.88888888888889 C   |   372.0388888888889 K
+
+All tests passed!
+t
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; THIS IS THE BEGINNING OF MY TEMPERATURE CLASS AND METHOD DECLARATIONS ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; temperature.el implements class Temperature
+;;; Author: Ian Christensen, for CS 214 at Calvin College
+;;; Date: Spring, 2018
+
+"Subroutine: initialize, 
+ Precondition: degrees and scale have values
+ Input: degrees, a real & scale, a character
+ Output: a Temperature object"
+(defun Temp(myDegrees myScale)
+  (if (= (validate myDegrees myScale) 1)
+      (list myDegrees myScale)
+    (princ "Error: Init(): invalid temperatures")))
+
+"Function: getDegrees, accessor for degrees variable
+ Parameters: Temperature object
+ Preconditions: myDegrees is initialized as a double value
+ Returns: myDegrees, a double"
+(defun getDegrees(atemp)
+  (car atemp))
+
+"Function: getScale, accessor for degrees variable
+ Parameters: Temperature object
+ Preconditions: myScale is initialized as a char value
+ Returns: myScale, a double"
+(defun getScale(atemp)
+  (car (cdr atemp)))
+
+"Subroutine: toCelsius, mutator for scale conversion
+ Precondition: @scale and @degrees are initialized
+ Input: a Temperature object
+ Output: new Temperature object with @scale == 'C'"
+(defun toCelsius (atemp)
+  (setq scale (upcase (getScale atemp)))
+  (if (string= scale "F")
+      (setq convertedDegrees (/ (- (getDegrees atemp) 32) 1.8))
+    (if (string= scale "K")
+(setq convertedDegrees (- (getDegrees atemp) 273.15))
+      (setq convertedDegrees (getDegrees atemp))))
+  (Temp convertedDegrees "C"))
+
+"Subroutine: toFahrenheit, mutator for scale conversion
+ Precondition: @scale and @degrees are initialized
+ Input: a Temperature object
+ Output: new Temperature object with @scale == 'F'"
+(defun toFahrenheit (atemp)
+  (setq scale (upcase (getScale atemp)))
+  (if (string= scale "C")
+      (setq convertedDegrees (+ 32 (* (getDegrees atemp) 1.8)))
+    (if (string= scale "K")
+(setq convertedDegrees (+ 32 (* (/ 9 5) (- (getDegrees atemp) 273.15))))
+      (setq convertedDegrees (getDegrees atemp))))
+  (Temp convertedDegrees "F"))
+
+"Subroutine: toKelvin, mutator for scale conversion
+ Precondition: @scale and @degrees are initialized
+ Input: a Temperature object
+ Output: new Temperature object with @scale == 'K'"
+(defun toKelvin (atemp)
+  (setq scale (upcase (getScale atemp)))
+  (if (string= scale "F")
+      (setq convertedDegrees (+ (/ (- (getDegrees atemp) 32) 1.8) 273.15))
+  (if (string= scale "C")
+    (setq convertedDegrees (+ (getDegrees atemp) 273.15))
+      (setq convertedDegrees (getDegrees atemp))))
+  (Temp convertedDegrees "K"))
+
+"Subroutine: fromString, input for user strings
+ Precondition: temperature_string is in format 
+ Input: String_Temp, a String
+ Output: new Temperature object"
+(defun fromString()
+  (setq inputList (split-string (read-from-minibuffer "Enter Temperature: ")))
+  (setq scale (getScale inputList))
+  (setq degrees (string-to-number (getDegrees inputList)))
+  (Temp degrees scale))
+
+"Subroutine: toString, stringifies a Temperature object
+ Precondition: @degrees and @scale are initialized
+ Input: a Temperature object
+ Output: String format of a Temperature object"
+(defun toString (atemp buf)
+  (princ (getDegrees atemp) buf)
+  (princ " ")
+  (princ (upcase (getScale atemp)) buf))
+
+"Subroutine: raiseTemp, mutator that increments a temperature's degree
+ Postcondition: the result cannot exceed the Planck Temperature
+ Input: a Temperature object & RaiseInc, a float
+ Output: new Temperature object with raised degree"
+(defun raise (atemp degrees)
+  (Temp (+ (getDegrees atemp) degrees) (getScale atemp)))
+
+"Subroutine: lowerTemp, mutator that decrements a temperature's degree
+ Postcondition: the result cannot deceed absolute zero
+ Input: a Temperature object & LowerInc, a float
+ Output: new Temperature object with lowered degree"
+(defun lower (atemp degrees)
+  (Temp (- (getDegrees atemp) degrees) (getScale atemp)))
+
+"Subroutine: equalTo, equality operator for temperature regardless of scale
+ Preconditions: otherTemp is a valid Temperature object
+ Input: otherTemp, a Temperature object
+ Output: true if equal, false if not equal"
+ (defun equalTo(theTemp otherTemp)
+  (cond
+    ((string= (getScale theTemp) "C")
+      (= (getDegrees theTemp) (getDegrees (toCelsius otherTemp))))
+    ((string= (getScale theTemp) "F")
+      (= (getDegrees theTemp) (getDegrees (toFahrenheit otherTemp))))
+    ((string= (getScale theTemp) "K")
+      (= (getDegrees theTemp) (getDegrees (toKelvin otherTemp))))
+    (t "Invalid Input")
+  )
+ )
+
+"Subroutine: lessThan, less than operator for temperature regardless of scale
+ Precondition: otherTemp is a valid Temperature object
+ Input: otherTemp, a Temperature object
+ Output: true if less than, false if not less than"
+(defun lessThan(theTemp otherTemp)
+  (cond
+    ((string= (getScale theTemp) "C")
+      (if (< (getDegrees theTemp) (getDegrees (toCelsius otherTemp))) 1 0))
+    ((string= (getScale theTemp) "F")
+      (if (< (getDegrees theTemp) (getDegrees (toFahrenheit otherTemp))) 1 0))
+    ((string= (getScale theTemp) "K")
+      (if (< (getDegrees theTemp) (getDegrees (toKelvin otherTemp))) 1 0))
+    (t "Invalid Input")
+  )
+)
+
+"Subroutine: validateTemperature, assesses whether the degree and scale are valid
+ Precondition: Degrees and Scale exist
+ Input: degrees, a double & scale, a char
+ Output: true, if a valid temperature"
+(defun validate(degrees myScale)
+  (setq scale (upcase myScale))
+
+  (cond ((string= scale "F")
+(if (>= degrees -351.67)
+     1
+   (progn
+     (princ "Error: validate() F: less than absolute 0")
+     0)))
+((string= scale "C")
+  (if (>= degrees -273.15)
+      1
+    (progn
+      (princ "Error: validate() C: less than absolute 0")
+      0)))
+
+  ((string= scale "K")
+   (if (>= degrees 0)
+       1
+     (progn
+       (princ "Error: validate() K: less than absolute 0")
+       0)))
+  (t (error "Error validate(): not a valid scale"))))
+
+(byte-compile-file "/home/igc2/workspace/214/projects/08/e-lisp/Temp.el")

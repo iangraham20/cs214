@@ -1,0 +1,220 @@
+
+<HTML>
+<HEAD>
+<TITLE> CS 214 Lab 8: Perl</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+<H2>
+<A HREF="../..">CS 214</A>
+Lab 8: Perl
+</H2>
+<HR>
+<p>
+As a modern object-oriented language,
+Perl supports the goals of modularity in multiple ways,
+including its <b>package</b> mechanism and its 
+<b>module</b> mechanism.
+Today's exercise examines each of these.
+<p>
+Begin by making a <tt>Perl</tt> subdirectory within your
+<tt>labs/08</tt> directory, and copying the file
+<em>nameTester.pl</em> from the <tt>labs/08/Perl/</tt> directory 
+into your subdirectory.
+Open it up using your favorite text editor and take a few
+moments to familiarize yourself with its contents,
+customize its documentation, etc.
+Then save and run it and verify that it works correctly.
+<h3>Packages</h3>
+<p>
+So what does all of this mean for our <tt>Name</tt> package?  
+Well, at the very least, we'd like this class to be reusable by
+other programs. 
+To accomplish this in Perl, there are a couple of different approaches:
+<p>
+<B>1. The <tt>require</tt> Approach</B>
+If we put the <tt>Name</tt> class into a separate file called
+<em>Name.pl</em>, we can then use the <tt>require</tt> method
+to import this code into our current program. 
+The <tt>require</tt> method is used to load another file and
+execute all its statements, 
+which will import all class and method definitions in the file.
+In addition to simply executing all of the 
+statements in the file, the <tt>require</tt> method also keeps
+track of which files have been previously imported, and 
+thus will not import the same file twice.
+<p>
+The require method takes the name of the file to require, as a
+string, as a single argument. 
+This can either be a path to the file, such as
+<tt>./lib/some_library.pl</tt>  or a shortened name, 
+such as <tt>some_library</tt>.
+If the argument is a path and complete filename,
+the <tt>require</tt> method will look there for the file.
+However, if the argument is a shortened name, the <tt>require</tt>
+method will search through a number of pre-defined directories
+on your system for that file. 
+Using the shortened name is the most common way of using the
+<tt>require</tt> method.
+
+<p>
+Try using this approach for the <tt>Name</tt> class and driver program.
+Put the class in its own file called <em>Name.pl</em>
+and then import this file into the driver using the 
+<tt>require</tt> method.
+Note that you can enclose the name of the file to require in
+either single quotes or double quotes. 
+</p>
+
+<p><B>2. The <tt>use</tt> Approach</B>
+The <tt>use</tt> method works very similarly to the
+<tt>require</tt> method, in that it causes all of the 
+statements in the file to be executed. 
+There are few differences though:  
+<ul>
+ <li>
+  <tt>use</tt> requires the full name of the file to be used 
+    (i.e. you must include the <em>.pl</em> extension of the file).
+ <li>
+  <tt>use</tt> does not keep track of whether or not the file has
+  been previously loaded -- it <b>always</b> causes
+  the statements in the file to be executed.
+  This may seem a strange utility to provide, but consider the
+  fact that Perl classes are continuously mutable. 
+  By allowing a file to be reloaded, you can always bring in the
+  most recent version of a file, even if some other process has
+  been updating it in real-time.</p>
+</ul>
+
+<h3>Modules</h3>
+
+In Perl,
+modules are a way of grouping together methods, classes and constants.
+One of the major benefits of a module is that it defines a namespace
+and thus can help prevent name clashes.</p>
+
+<p>
+As you start to write bigger and bigger Perl programs, you'll
+naturally find yourself producing chunks of reusable code -- 
+libraries of related routines that are generally applicable.
+You'll want to break this code out into separate files so the
+contents can be shared among different Perl programs.</p>
+
+<p>
+Often this code will be organized into classes, so you'll
+probably stick a package (or a set of interrelated classes) into a file.
+This is the approach we will take for our <tt>Name</tt> package.
+There are also times when you want to group things 
+together that don't naturally form a package. 
+An initial approach might be to put all these things into a file and 
+simply load that file into any program that needs it.
+This is the way the C language works.
+However, there's a problem. 
+Say you write a set of trigonometry functions sin, cos, and so on.
+You stuff them all into a file, <em>trig.pl</em>, for 
+future generations to enjoy. 
+Meanwhile, Sally is working on a simulation of good and evil,
+and codes up a set of her own useful routines, including
+beGood and sin, and sticks them into <em>action.pl</em>.
+Joe, who wants to write a program to find out how many angels
+can dance on the head of a pin, needs to use both <em>trig.pl</em>
+ and <em>action.pl</em> in his program.
+But both define a method called <tt>sin</tt>.
+Bad news.</p>
+
+<p>This where where the module mechanism comes in.
+Modules define a namespace, a walled-off sandbox in which your 
+methods and constants can play without having to worry about
+interfering with other methods and constants. 
+The trig functions can go into one module: </p>
+<PRE>
+(Trig.pm)
+  PI = 3.141592654
+  sub Trig->sin(x)
+   # ..
+  }
+  sub Trig->cos(x)
+   # ..
+  }
+}
+</PRE>
+<p>and the good and bad action methods can go into another:</p>
+<PRE>
+(Actions.pm)
+  VERY_BAD = 0
+  BAD      = 1
+  # ...
+  sub Action->sin(badness)
+    # ...
+  }
+}
+</PRE>
+<p>In perl a module is initialized by simply naming the file with the 
+extention <tt>.pm</tt> (for perl module) instead of <tt>.pl</tt> and 
+any code contained in that file is part of the module.</p>
+<PRE>
+require "trig"
+require "action"
+
+y = Trig->sin(Trig->{PI}/4)
+wrongdoing = Action->sin(Action->{VERY_BAD})
+</PRE>
+<p>In Perl you only need to use or require the module name to be 
+  able to access the package methods contained in the module, which 
+  can be done by simply calling the method without preceding it with 
+  the module name or any other syntax.
+</p>
+
+<p>
+Refactor (or rename) your code to wrap the <tt>Name</tt> package in a module
+named <tt>Names.pm</tt>, and then use it within your driver.  
+</p>
+<p>
+<b>Testing</b>.
+Test your changes and continue when your program works correctly.
+
+<p>
+<b>Turn In</b>:
+Use <tt>script</tt> to create a file in which you
+list each of your Perl source files,
+and then run your test program.
+</p>
+<P>
+That concludes the Perl part of this lab. 
+<p>
+If this was your last exercise, return to the
+<a href="../">lab 08</a> page and follow the 
+"Turn In" instructions there.
+<p>
+<hr>
+<p>
+<a href="http://www.calvin.edu/">Calvin</a> &gt;
+<a href="http://cs.calvin.edu/">CS</a> &gt;
+<a href="../../../">214</a> &gt;
+<a href="../../">Labs</a> &gt;
+<a href="../">08</a> &gt;
+Perl
+<p>
+<hr>
+<FONT SIZE=-1>
+This page maintained by
+<A HREF="http://www.calvin.edu/~adams">Joel Adams</A>.
+</FONT>
+<script>
+	(function(i, s, o, g, r, a, m) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function() {
+			(i[r].q = i[r].q || []).push(arguments)
+		}, i[r].l = 1 * new Date();
+		a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore(a, m)
+	})(window, document, 'script',
+		'//www.google-analytics.com/analytics.js', 'ga');
+	ga('create', 'UA-864318-1', 'calvin.edu');
+	ga('send', 'pageview');
+</script>
+</BODY>
+</HTML>
+

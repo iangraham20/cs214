@@ -1,0 +1,81 @@
+NAMETESTER.EL FILE:
+;;; nameTester.el simulates and tests an e-LISP Name type
+;;; Begun by: Dr. Adams, CS 214 at Calvin College
+;;; Completed by: Ian Christensen, CS 214 at Calvin College
+;;; Date: Spring, 2018
+
+(setq load-path (cons "." load-path))
+
+("." "/usr/share/emacs24/site-lisp/a2ps" "/etc/emacs24" "/etc/emacs" "/usr/local/share/emacs/24.5/site-lisp" "/usr/local/share/emacs/site-lisp" "/usr/share/emacs24/site-lisp/erlang" "/usr/share/emacs24/site-lisp/dictionaries-common" "/usr/share/emacs24/site-lisp/cmake-data" "/usr/share/emacs/site-lisp/autoconf" "/usr/share/emacs/24.5/site-lisp" "/usr/share/emacs/24.5/site-lisp/a2ps" ...)
+
+(load "/home/igc2/workspace/214/labs/08/e-lisp/Name.el")
+
+t
+
+"A simple driver for our Name functions"
+(progn
+  (require 'cl)
+  (setq aName (Name "John" "Paul" "Jones"))
+  (assert (equal (getFirst aName) "John"))
+  (assert (equal (getMiddle aName) "Paul"))
+  (assert (equal (getLast aName) "Jones"))
+  (assert (equal (getFullName aName) "John Paul Jones"))
+  (setq buf (get-buffer "nameTester.el"))
+  (assert (eq (printName aName buf) aName) )
+  (terpri buf)
+  (princ "All tests passed!" buf)
+  (terpri buf)
+)
+
+John Paul Jones
+All tests passed!
+t
+
+
+NAME.EL FILE:
+;;; Name.el simulates an e-LISP Name type and operations on that type.
+;;; Begun by: Dr. Adams, CS 214 at Calvin College
+;;; Completed by: Ian Christensen, CS 214 at Calvin College
+;;; Date: Spring, 2018
+
+"Name constructs a name from three strings
+ Receive: first, middle and last, three strings
+ Return: the triplet (first middle last)"
+(defun Name(first middle last)
+  (list first middle last)
+)
+
+"getFirst extracts the first name of a name object
+ Receive: theName, a Name
+ Return: the first string in theName"
+(defun getFirst(theName)
+  (car theName)
+)
+
+"getMiddle extracts the middle name of a name object
+ Receive: theName, a Name
+ Return: the second string in theName"
+(defun getMiddle(theName)
+  (car (cdr theName)) 
+)
+
+"getLast extracts the last name of a name object
+ Receive: theName, a Name
+ Return: the third string in theName"
+(defun getLast(theName)
+  (car (cdr (cdr theName)))
+)
+
+"getFullName returns a full name in F-M-L order
+ Return: myFirst, myMiddle, myLast"
+(defun getFullName (theName)
+   (concat (getFirst theName) " " (getMiddle theName) " " (getLast theName))
+)
+
+"printName displays a name object
+ Receive: theName, a Name, buffer, the name of a buffer
+ Output: the strings in theName to buffer"
+(defun printName (theName buf)
+   (princ (getFullName theName) buf)
+   theName
+)
